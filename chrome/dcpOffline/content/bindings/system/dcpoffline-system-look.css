@@ -262,3 +262,8 @@ dcpAttribute[mode=edit][type=htmltext][visibility=H]{
     min-height: 0;
     min-width: 0;
 }
+
+dcpDocument [visibility=H],
+dcpDocument [visibility=I] {
+    visibility: collapse;
+}

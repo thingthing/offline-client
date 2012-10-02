@@ -30,22 +30,24 @@
                 parent;
             ]]></field>
             <constructor><![CDATA[
+                var tabs, tab, id;
                 if (this.tabbox) {
-                    var tabs = this.tabbox.tabs;
-                    
-                    var id = Components.classes["@mozilla.org/uuid-generator;1"]
+                    tabs = this.tabbox.tabs;
+
+                    id = Components.classes["@mozilla.org/uuid-generator;1"]
                             .getService(Components.interfaces.nsIUUIDGenerator)
                             .generateUUID()
                             .toString()
                             .slice(1,-1);
                     this.setAttribute('id', id);
-                    
+
                     if (tabs) {                   
                        // be carreful : constructors are called in inverse order of dom order
-                       var tab = tabs.insertItemAt(0,this.getAttribute('label'),this.getAttribute('label'));
-                       tab.setAttribute('linkedpanel', id);
-                       tab.setAttribute('attrid', this.getAttribute('attrid'));
-                       tab.setAttribute('tooltiptext', this.getAttribute('label'));
+                        tab = tabs.insertItemAt(0,this.getAttribute('label'),this.getAttribute('label'));
+                        tab.setAttribute('linkedpanel', id);
+                        tab.setAttribute('attrid', this.getAttribute('attrid'));
+                        tab.setAttribute('tooltiptext', this.getAttribute('label'));
+                        tab.setAttribute('visibility', this.getAttribute('visibility'));
                     } else {
                         Components.utils.import("resource://modules/exceptions.jsm");
                         logError(new BindError("there is no 'tabs' tag associated with this tab: " + this.getAttribute("attrid")));
@@ -80,50 +82,58 @@
         </content>
         <implementation>
             <constructor><![CDATA[
-                Components.utils.import("resource://modules/logger.jsm");
-                
-                var tbody=this.getChild('tableBody');
-                var cn=this.childNodes; // these should be the attributes(ie: the columns)
+                    Components.utils.import("resource://modules/logger.jsm");
 
+                    var i, r, length, tbody, childNodes, arrayRowLength, headerRow, rows, columns,
+                            currentColumn, columnFlex, currentLabel, currentNode, currentVisibility, currentRow, currentAttribute;
 
-                var arrayRowLength=0;
-                var headerRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+                    tbody = this.getChild('tableBody');
+                    childNodes = this.childNodes;
+                    arrayRowLength = 0;
+                    headerRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+                    rows = this.getChild('rows');
+                    columns = this.getChild('columns');
 
-                for(var i = 0; i < cn.length; i++){
+                    for (i = 0, length = childNodes.length; i < length; i++) {
+                        currentNode = childNodes[i];
 
-                    var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
-                    var columnFlex = cn[i].getAttribute('flex');
+                        /* Generate label line */
+                        currentLabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
+                        currentLabel.setAttribute('value', currentNode.getAttribute('label'));
+                        currentLabel.setAttribute('tooltiptext', currentNode.getAttribute('label'));
+                        currentLabel.setAttribute('visibility', currentNode.getAttribute('visibility'));
+                        currentLabel.classList.add('header');
+                        currentLabel.classList.add('plain');
+                        headerRow.appendChild(currentLabel);
 
-                    var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
-                    clabel.setAttribute('value', cn[i].getAttribute('label'));
-                    clabel.setAttribute('tooltiptext', cn[i].getAttribute('label'));
-                    clabel.setAttribute('visibility', cn[i].getAttribute('visibility'));
-                    clabel.classList.add('header');
-                    clabel.classList.add('plain');
-                    headerRow.appendChild(clabel);
-                    arrayRowLength= Math.max(arrayRowLength, this.doc.getValue(cn[i].getAttribute('attrid')).length);
+                        /*Generate column content */
+                        currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                        columnFlex = childNodes[i].getAttribute('flex');
+                        currentColumn.setAttribute('flex', columnFlex ? columnFlex : 1);
+                        currentVisibility = currentNode.getAttribute('visibility');
+                        if (currentVisibility === 'R' || currentVisibility === 'H') {
+                            currentColumn.setAttribute("collapsed", true);
+                        }
+                        columns .appendChild(currentColumn);
 
-
-                    currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
-                    this.getChild('columns').appendChild(currentColumn);
-                }
-                this.getChild('rows').appendChild(headerRow);
-
-
-                for(var i = 0; i < arrayRowLength; i++){
-                    var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
-
-                    for(var r = 0; r < cn.length; r++){
-                        var currentAttribute = cn[r].cloneNode(true);
-                        //currentAttribute.classList.add('body');
-                        currentAttribute.setAttribute('index', i);
-                        
-                        currentRow.appendChild(currentAttribute);
+                        arrayRowLength = Math.max(arrayRowLength, this.doc.getValue(currentNode.getAttribute('attrid')).length);
                     }
-                    this.getChild('rows').appendChild(currentRow);
-                }
-                
-            ]]></constructor>
+
+                    rows.appendChild(headerRow);
+
+                    for (i = 0; i < arrayRowLength; i++) {
+                        currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+
+                        for ( r = 0; r < childNodes.length; r++) {
+                            currentAttribute = childNodes[r].cloneNode(true);
+                            currentAttribute.setAttribute('index', i);
+
+                            currentRow.appendChild(currentAttribute);
+                        }
+                        rows.appendChild(currentRow);
+                    }
+
+                ]]></constructor>
         </implementation>
     </binding>
 </bindings>
