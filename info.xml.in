@@ -4,7 +4,7 @@
   <description lang="fr"></description>
 
   <requires>
-    <module name="dynacase-offline-xulruntimes" />
+    <module name="dynacase-offline-server" />
   </requires>
 
   <post-install>
