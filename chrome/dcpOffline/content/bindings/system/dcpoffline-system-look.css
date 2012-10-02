@@ -117,7 +117,15 @@ dcpRow{
 dcpArrayRowTools,
 dcpArrayTableTools{
     display: -moz-inline-box;
+    visibility: collapse;
     min-width: 0;
+}
+
+dcpAttribute[type=array][visibility=W] dcpArrayRowTools,
+dcpAttribute[type=array][visibility=W] dcpArrayTableTools,
+dcpAttribute[type=array][visibility=O] dcpArrayRowTools,
+dcpAttribute[type=array][visibility=O] dcpArrayTableTools {
+    visibility: visible;
 }
 
 dcpAttribute[type=array] dcpAttribute {
