@@ -190,20 +190,19 @@
             
             <constructor><![CDATA[
                 Components.utils.import("resource://modules/logger.jsm");
-                
-                var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
-                
-                var toolsColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+
+                var currentRow, toolsColumn, i, toolsCell, nbRows = 0, currentColumn, columnFlex, visibility;
+                currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+
+                toolsColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
                 this.columns.appendChild(toolsColumn);
-                
-                var toolsCell = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", 'dcpArrayTableTools');
+
+                toolsCell = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", 'dcpArrayTableTools');
                 toolsCell.classList.add('header');
                 toolsCell.classList.add('plain');
                 currentRow.appendChild(toolsCell);
-                
-                var nbRows = 0;
-                
-                for (var i = 0; i < this.childAttributes.length; ++i) {
+
+                for (i = 0; i < this.childAttributes.length; ++i) {
                     var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
                     clabel.setAttribute("value", this.childAttributes[i].getAttribute('label'));
                     clabel.setAttribute("tooltiptext", this.childAttributes[i].getAttribute('label'));
@@ -212,11 +211,11 @@
                     
                     currentRow.appendChild(clabel);
                     
-                    var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
-                    var columnFlex = this.childAttributes[i].getAttribute('flex');
+                    currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                    columnFlex = this.childAttributes[i].getAttribute('flex');
                     currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
                     
-                    var visibility = this.childAttributes[i].getAttribute('visibility'); 
+                    visibility = this.childAttributes[i].getAttribute('visibility');
                     if(visibility == 'R' || visibility == 'H'){
                         currentColumn.collapsed = true;
                     }
@@ -228,7 +227,7 @@
                 
                 this.rows.appendChild(currentRow);
                 
-                for (var i = 0; i < nbRows; i++){
+                for (i = 0; i < nbRows; i++){
                     this.insertNewRow(i, true);
                 }
                 
