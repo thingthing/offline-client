@@ -304,32 +304,30 @@
                     if(networkChecker.isOffline()){
                         alert("You can only abort when online");
                     } else {
-                        try{
-                             var msgTitle=this.translate("document.confirm.abort.title");
-                             var msgText=this.translate("document.confirm.abort.message",[this.doc.getTitle()]);
-                             var wantAbort = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                .getService(Components.interfaces.nsIPromptService)
-                                .confirm(null, msgTitle, msgText);
-                             if (wantAbort) {
-                                var domainId = docManager.getActiveDomain();
-                                var domain = context.getDocument({
-                                    id : domainId
-                                });
-                                var docid=this.initid;
-                                var me=this;
-                                offlineSync.revertDocument({
-                                    domain: domain,
-                                    initid: this.initid,
-                                    onAfterRevert:function() {
-                                       me.reinit();
-                                       applicationEvent.publish("postSynchronize",{});
-                                       tryToOpenDocument({documentId : docid});
-                                    }
-                                });
-                            }
-                        } catch(e) {
-                            logError(e, "error when reverting document "+this.initid);
-                            this.warning(e);
+                         var msgTitle=this.translate("document.confirm.abort.title");
+                         var msgText=this.translate("document.confirm.abort.message",[this.doc.getTitle()]);
+                         var wantAbort = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService)
+                            .confirm(null, msgTitle, msgText);
+                         if (wantAbort) {
+                            var domainId = docManager.getActiveDomain();
+                            var domain = context.getDocument({
+                                id : domainId
+                            });
+                            var docid=this.initid;
+                            var me=this;
+                             applicationEvent.publish("simpleSynchronize", {
+                                  method : "revertDocument",
+                                  options : {
+                                      domain: domain,
+                                      initid: docid,
+                                      onAfterRevert:function() {
+                                         me.reinit();
+                                         applicationEvent.publish("postSynchronize",{});
+                                         tryToOpenDocument({documentId : docid});
+                                      }
+                                  }
+                              });
                         }
                     }
                 ]]></body>
@@ -351,27 +349,24 @@
                          };
                         applicationEvent.publish("askForCloseDocument", param);
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.revertDocument({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "revertDocument",
+                            options : {
                                 domain: domain,
-                                initid: this.initid,
+                                initid: docid,
                                 onAfterRevert:function() {
                                    me.reinit();
                                    applicationEvent.publish("postSynchronize",{});
                                    tryToOpenDocument({documentId : docid});
                                 }
-                            });
-
-                        } catch(e) {
-                            logError(e, "error when reverting document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -385,17 +380,19 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only revert when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.pushDocuments({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "pushDocuments",
+                            options : {
                                 domain: domain,
-                                pushOnly: this.initid,
+                                pushOnly: docid,
                                 onError:function(result) {
+                                   applicationEvent.publish("unableToSynchronize", result);
                                    logConsole("SYNCHRO-ONE ERROR",result);
                                 },
                                 onComplete:function() {
@@ -403,12 +400,9 @@
                                     me.reinit();
                                     applicationEvent.publish("postSynchronize",{});
                                     tryToOpenDocument({documentId : docid});
-                                 }   
-                              });
-                        } catch(e) {
-                            logError(e, "error when synchronize document "+this.initid);
-                            this.warning(e);
-                        }
+                                 }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -422,25 +416,22 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only unlink when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var me=this;
-                            offlineSync.unlinkDocument({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "unlinkDocument",
+                            options : {
                                 domain: domain,
                                 initid: this.initid,
                                 onAfterUnlink:function() {
                                    me.reinit();
                                    applicationEvent.publish("postSynchronize",{});
                                 }
-                            });
-
-                        } catch(e) {
-                            logError(e, "error when unlink document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -454,28 +445,25 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only book when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
 
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.bookDocument({
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "bookDocument",
+                            options : {
                                 domain: domain,
                                 initid: this.initid,
                                 onAfterBook:function() {
                                    me.reinit();
                                    applicationEvent.publish("postSynchronize",{});
-                                   tryToOpenDocument({documentId : docid});
+                                    tryToOpenDocument({documentId : docid});
                                 }
-                            });
-
-                        } catch(e) {
-                            logError(e, "error when booking document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -490,29 +478,24 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only book when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.unbookDocument({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "unbookDocument",
+                            options : {
                                 domain: domain,
                                 initid: this.initid,
-
                                 onAfterUnbook:function() {
                                    me.reinit();
                                    applicationEvent.publish("postSynchronize",{});
                                    tryToOpenDocument({documentId : docid});
                                 }
-                            });
-
-
-                        } catch(e) {
-                            logError(e, "error when unbooking document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>

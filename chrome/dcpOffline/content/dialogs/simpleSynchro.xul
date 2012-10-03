@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+
+<window id="dialogSynchronize"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&synchronize.dialogTitle;">
+    <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/simpleSynchro.js" />
+    <vbox flex="1">
+        <groupbox>
+            <caption>
+                <label value="&synchro.synchronizationInProgress;"/>
+            </caption>
+            <hbox>
+                <progressmeter mode="undetermined"/>
+            </hbox>
+        </groupbox>
+    </vbox>
+</window>
