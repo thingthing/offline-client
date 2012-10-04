@@ -323,7 +323,7 @@
                                       initid: docid,
                                       onAfterRevert:function() {
                                          me.reinit();
-                                         applicationEvent.publish("postSynchronize",{});
+                                         applicationEvent.publish("postSynchronize",false);
                                          tryToOpenDocument({documentId : docid});
                                       }
                                   }
@@ -362,7 +362,7 @@
                                 initid: docid,
                                 onAfterRevert:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                    tryToOpenDocument({documentId : docid});
                                 }
                             }
@@ -392,13 +392,14 @@
                                 domain: domain,
                                 pushOnly: docid,
                                 onError:function(result) {
-                                   applicationEvent.publish("unableToSynchronize", result);
+                                   applicationEvent.publish("postSynchronize", result);
                                    logConsole("SYNCHRO-ONE ERROR",result);
                                 },
-                                onComplete:function() {
+                                onComplete:function(result) {
                                     offlineSync.retrieveReport({domain:domain});
                                     me.reinit();
-                                    applicationEvent.publish("postSynchronize",{});
+                                    applicationEvent.publish("postSynchronize",result);
+                                    logConsole("result",result);
                                     tryToOpenDocument({documentId : docid});
                                  }
                             }
@@ -428,7 +429,7 @@
                                 initid: this.initid,
                                 onAfterUnlink:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                 }
                             }
                         });
@@ -459,7 +460,7 @@
                                 initid: this.initid,
                                 onAfterBook:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                     tryToOpenDocument({documentId : docid});
                                 }
                             }
@@ -491,7 +492,7 @@
                                 initid: this.initid,
                                 onAfterUnbook:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                    tryToOpenDocument({documentId : docid});
                                 }
                             }
@@ -537,18 +538,6 @@
                     if(state){
                         this.setAttribute('state', state);
                     }
-                    
-                    /*
-                    var hasMode = this.hasAttribute('mode');
-                    if(! hasMode ){
-                        this.setAttribute('mode', 'view');
-                    } else {
-                        var mode = this.getAttribute('mode');
-                        if( (mode !== 'view') && (mode !== 'edit') ){
-                            this.setAttribute('mode', 'view');
-                        }
-                    }
-                    */
                     
                     this.hooks = this.hooks || {};
                     this.hooks.preClose = function preCloseHook(config){

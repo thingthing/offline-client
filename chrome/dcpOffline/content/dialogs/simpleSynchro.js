@@ -2,6 +2,7 @@ Components.utils.import("resource://modules/events.jsm");
 Components.utils.import("resource://modules/StringBundle.jsm");
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://modules/offlineSynchronize.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 window.onload = function () {
     applicationEvent.subscribe("unableToSynchronize", displayError);
@@ -56,7 +57,9 @@ function addObserver() {
 
 function displayEndOfSynchronize(result) {
     suppressListener();
-    openDialog("chrome://dcpoffline/content/dialogs/endOfSynchronize.xul", "", "chrome,modal,close=false", result);
+    if (result) {
+        openDialog("chrome://dcpoffline/content/dialogs/endOfSynchronize.xul", "", "chrome,modal,close=false", result);
+    }
     window.close();
 }
 
