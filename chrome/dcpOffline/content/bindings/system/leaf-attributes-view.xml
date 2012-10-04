@@ -1,138 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE bindings [
-      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.dtd" >
-      <!ENTITY separator "&#160;:&#160;" >
-      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
-      %leaf-attributes-bindingDTD;
-]>
+        <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.dtd" >
+        <!ENTITY separator "&#160;:&#160;" >
+        <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+        %leaf-attributes-bindingDTD;
+        ]>
 <bindings
-    id="leaf-attributes-binding"
-    xmlns="http://www.mozilla.org/xbl"
-    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl"
-    xmlns:html="http://www.w3.org/1999/xhtml">
+        id="leaf-attributes-binding"
+        xmlns="http://www.mozilla.org/xbl"
+        xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:xbl="http://www.mozilla.org/xbl"
+        xmlns:html="http://www.w3.org/1999/xhtml">
     <binding
-        id="leaf-attr-view"
-        extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
+            id="leaf-attr-view"
+            extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
 
             <method name="reloadValue">
                 <body><![CDATA[
-                    if (this.getValue() === '') {
-                       var cn=document.getAnonymousNodes(this);
-                       for (var i=0;i<cn.length;i++) {
-                         cn[i].style.display='none';
-                       }
-                    } else {
-                        var valueNode = this.getChild('displayValue');
-                        if(valueNode){
-                           if (Array.isArray(this.getValue())) {
-                             valueNode.textContent=this.getValue();
-                           } else {
-                            valueNode.textContent=this.getDisplayValue();
-                           }
+                        if (this.getValue() === '') {
+                            var cn = document.getAnonymousNodes(this);
+                            for (var i = 0; i < cn.length; i++) {
+                                cn[i].style.display = 'none';
+                            }
                         } else {
-                           // Components.utils.import("resource://modules/exceptions.jsm");
-                           // throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                            var valueNode = this.getChild('displayValue');
+                            if (valueNode) {
+                                if (Array.isArray(this.getValue())) {
+                                    valueNode.textContent = this.getValue();
+                                } else {
+                                    valueNode.textContent = this.getDisplayValue();
+                                }
+                            } else {
+                                // Components.utils.import("resource://modules/exceptions.jsm");
+                                // throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                            }
                         }
-                    }
-                ]]></body>
+                    ]]></body>
             </method>
 
             <method name="getDisplayValue">
                 <body><![CDATA[
-                    return this.getValue()
-                ]]></body>
+                        return this.getValue()
+                    ]]></body>
             </method>
 
             <constructor><![CDATA[
-                this.reloadValue();
-            ]]></constructor>
+                    this.reloadValue();
+                ]]></constructor>
         </implementation>
     </binding>
     <!-- Text attributes -->
     <binding
-        id="text-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="text-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute text">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute text">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
     </binding>
     <binding
-        id="longtext-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="longtext-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute longtext">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute longtext">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue"
-                    style="white-space:pre-line;">
+                        anonid="displayValue"
+                        class="dcpValue"
+                        style="white-space:pre-line;">
                 </xul:label>
             </xul:hbox>
         </content>
         <implementation>
             <method name="getDisplayValue">
                 <body><![CDATA[
-                    var s=this.getValue();
-                    if (s && this.index !== undefined) s=s.replace(/<BR>/g,"\n");
-                    return s;
-                ]]></body>
+                        var s = this.getValue();
+                        if (s && this.index !== undefined) s = s.replace(/<BR>/g, "\n");
+                        return s;
+                    ]]></body>
             </method>
         </implementation>
     </binding>
     <binding
-        id="htmltext-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="htmltext-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute longtext">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute longtext">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <html:div
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <method name="reloadValue">
                 <body><![CDATA[
-                    var Cc = Components.classes;
-                    var Ci = Components.interfaces;
-                    
-                    var valueNode = this.getChild('displayValue');
-                    if(valueNode){
-                        valueNode.appendChild(
-                                Cc["@mozilla.org/feed-unescapehtml;1"]
-                                        .getService(
-                                                Ci.nsIScriptableUnescapeHTML)
-                                        .parseFragment(this.getValue(),
-                                                false,
-                                                null,
-                                                valueNode));
-                    } else {
-                        throw new BindingException("no displayValue chil for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
-                    }
-                ]]></body>
+                        var Cc = Components.classes;
+                        var Ci = Components.interfaces;
+
+                        var valueNode = this.getChild('displayValue');
+                        if (valueNode) {
+                            valueNode.appendChild(
+                                    Cc["@mozilla.org/feed-unescapehtml;1"]
+                                            .getService(
+                                            Ci.nsIScriptableUnescapeHTML)
+                                            .parseFragment(this.getValue(),
+                                            false,
+                                            null,
+                                            valueNode));
+                        } else {
+                            throw new BindingException("no displayValue chil for attr [" + this.attrid + "] in doc [" + this.doc.initid + "]");
+                        }
+                    ]]></body>
             </method>
         </implementation>
     </binding>
@@ -142,538 +142,534 @@
         <implementation>
             <field name="link"><![CDATA[
                 this.getAttribute('link')
-            ]]></field>
+                ]]></field>
             <constructor><![CDATA[
-                this.setAttribute('title',this.href);
-                var href=this.href;
-                this.setAttribute('href','javascript:void(0)');
-                this.setAttribute('link',href);
-                
-            ]]></constructor>
+                    this.setAttribute('title', this.href);
+                    var href = this.href;
+                    this.setAttribute('href', 'javascript:void(0)');
+                    this.setAttribute('link', href);
+                ]]></constructor>
         </implementation>
         <handlers>
             <handler
-                event="click"
-                button="0"><![CDATA[
-                if(this.link!=''){
-                   
-                    // first construct an nsIURI object using the ioservice
-                    var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
-                                              .getService(Components.interfaces.nsIIOService);
-                    
-                    var uriToOpen = ioservice.newURI(this.link, null, null);
-                    
-                    var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                                          .getService(Components.interfaces.nsIExternalProtocolService);
-                    
-                    // now, open it!
-                    extps.loadURI(uriToOpen);
-                    
-                }
-            ]]></handler>
+                    event="click"
+                    button="0"><![CDATA[
+                    if (this.link != '') {
+
+                        // first construct an nsIURI object using the ioservice
+                        var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
+                                .getService(Components.interfaces.nsIIOService);
+
+                        var uriToOpen = ioservice.newURI(this.link, null, null);
+
+                        var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                                .getService(Components.interfaces.nsIExternalProtocolService);
+
+                        // now, open it!
+                        extps.loadURI(uriToOpen);
+
+                    }
+                ]]></handler>
         </handlers>
     </binding>
 
     <!-- Color attributes -->
     <binding
-        id="color-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="color-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute color">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute color">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <field name="displayValue"><![CDATA[
                 this.getChild('displayValue')
-            ]]></field>
+                ]]></field>
             <constructor><![CDATA[
-              if (this.getValue()) {
-                this.displayValue.style.backgroundColor=this.getValue();
-              }
-            ]]></constructor>
+                    if (this.getValue()) {
+                        this.displayValue.style.backgroundColor = this.getValue();
+                    }
+                ]]></constructor>
         </implementation>
     </binding>
     <!-- Numeric attributes -->
     <binding
-        id="int-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="int-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute int">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute int">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
     </binding>
     <binding
-        id="double-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="double-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute double">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute double">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
     </binding>
     <binding
-        id="money-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="money-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute money">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute money">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
     </binding>
     <!-- Date attributes -->
     <binding
-        id="time-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="time-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute time">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute time">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <method name="getDisplayValue">
                 <body><![CDATA[
-                    return new Date("1970-01-01T"+this.getValue()).toLocaleFormat("%X");
-                ]]></body>
+                        return new Date("1970-01-01T" + this.getValue()).toLocaleFormat("%X");
+                    ]]></body>
             </method>
         </implementation>
     </binding>
     <binding
-        id="date-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="date-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute date">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute date">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <method name="getDisplayValue">
                 <body><![CDATA[
-                    return new Date(this.getValue()).toLocaleFormat("%x");
-                ]]></body>
+                        return new Date(this.getValue()).toLocaleFormat("%x");
+                    ]]></body>
             </method>
         </implementation>
     </binding>
     <binding
-        id="timestamp-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="timestamp-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute timestamp">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute timestamp">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <method name="getDisplayValue">
                 <body><![CDATA[
-                    return new Date(this.getValue().replace(' ','T')).toLocaleFormat("%xX");
-                ]]></body>
+                        return new Date(this.getValue().replace(' ', 'T')).toLocaleFormat("%xX");
+                    ]]></body>
             </method>
         </implementation>
     </binding>
 
     <!-- Relation attributes -->
     <binding
-        id="docid-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="docid-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute docid">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute docid">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <html:div>
                     <html:img
-                        anonid="docIcon"
-                        class="dcpIcon" />
+                            anonid="docIcon"
+                            class="dcpIcon"/>
                 </html:div>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <field name="displayValue"><![CDATA[
                 this.getChild('displayValue');
-            ]]></field>
+                ]]></field>
             <field name="docid"><![CDATA[
                 this.getDocid();
-            ]]></field>
+                ]]></field>
 
             <method name="getDocid">
                 <body><![CDATA[
-                var docid=this.getValue();
-                if (this.getAttribute('docid') > 0) {
-                   docid=this.getAttribute('docid');
-                }
-                return docid;
-                ]]></body>
+                        var docid = this.getValue();
+                        if (this.getAttribute('docid') > 0) {
+                            docid = this.getAttribute('docid');
+                        }
+                        return docid;
+                    ]]></body>
             </method>
             <method name="openDoc">
                 <body><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            
-            
-            try {
-              var rdoc=docManager.getLocalDocument({initid:this.docid});
-              if (rdoc) {
-                tryToOpenDocument({documentId:this.docid});
-              }
-            } catch (e) {}
-                ]]></body>
+                        Components.utils.import("resource://modules/formater.jsm");
+
+                        try {
+                            var rdoc = docManager.getLocalDocument({initid : this.docid});
+                            if (rdoc) {
+                                tryToOpenDocument({documentId : this.docid});
+                            }
+                        } catch (e) {
+                        }
+                    ]]></body>
             </method>
             <constructor><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            Components.utils.import("resource://modules/docManager.jsm");
-            var valueNode = this.getChild('displayValue');
-            
-            var docid = this.docid
-            
-            if ( docid && !(Array.isArray(docid)) ) {
-                var title=formater.getDocumentTitle({initid:docid});
-                
-                valueNode.value=title;
-                try {
-                  var rdoc=docManager.getLocalDocument({initid:docid});
-                  if (rdoc) {
-                    valueNode.classList.add('link');
-                    var oicon=this.getChild("docIcon");
-                    var icon=rdoc.getIcon();
-                    if (icon) {
-                        oicon.src='file://'+icon;
+                    Components.utils.import("resource://modules/formater.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    var valueNode = this.getChild('displayValue');
+
+                    var docid = this.docid
+
+                    if (docid && !(Array.isArray(docid))) {
+                        var title = formater.getDocumentTitle({initid : docid});
+
+                        valueNode.value = title;
+                        try {
+                            var rdoc = docManager.getLocalDocument({initid : docid});
+                            if (rdoc) {
+                                valueNode.classList.add('link');
+                                var oicon = this.getChild("docIcon");
+                                var icon = rdoc.getIcon();
+                                if (icon) {
+                                    oicon.src = 'file://' + icon;
+                                }
+                            }
+                        } catch (e) {
+                        }
                     }
-                  }
-                } catch (e) {}
-            }
-            
-            ]]>
+                ]]>
             </constructor>
         </implementation>
         <handlers>
             <handler
-                event="click"
-                button="0"><![CDATA[
-                if(event.originalTarget == this.displayValue){
-                    this.openDoc();
-                }
-            ]]></handler>
+                    event="click"
+                    button="0"><![CDATA[
+                    if (event.originalTarget == this.displayValue) {
+                        this.openDoc();
+                    }
+                ]]></handler>
         </handlers>
     </binding>
     <binding
-        id="docid-multiple-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="docid-multiple-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute docid">
-                <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
-                <xul:grid
+                    xbl:inherits="attrid"
                     flex="1"
-                    inherited="attrid">
-                    <xul:columns anonid="columns" />
-                    <xul:rows anonid="rows" />
+                    class="dcpAttribute docid">
+                <xul:dcpAttributeLabel
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
+                <xul:grid
+                        flex="1"
+                        inherited="attrid">
+                    <xul:columns anonid="columns"/>
+                    <xul:rows anonid="rows"/>
                 </xul:grid>
             </xul:hbox>
         </content>
         <implementation>
             <constructor><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            
-            var docids=this.getValue();
-            var rows=this.getChild('rows');
-            for (var i=0;i<docids.length; i++) {
-               var clo=this.cloneNode(false);
-               clo.setAttribute("multiple", "false");
-               clo.setAttribute("index", i);
-               rows.appendChild(clo);
-            }
-            ]]>
+                    Components.utils.import("resource://modules/formater.jsm");
+
+                    var docids = this.getValue();
+                    var rows = this.getChild('rows');
+                    for (var i = 0; i < docids.length; i++) {
+                        var clo = this.cloneNode(false);
+                        clo.setAttribute("multiple", "false");
+                        clo.setAttribute("index", i);
+                        rows.appendChild(clo);
+                    }
+                ]]>
             </constructor>
         </implementation>
     </binding>
 
     <binding
-        id="docid-multiple2-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="docid-multiple2-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute docid">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute docid">
 
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:grid
-                    flex="1"
-                    inherited="attrid">
-                    <xul:columns anonid="columns" />
-                    <xul:rows anonid="rows" />
+                        flex="1"
+                        inherited="attrid">
+                    <xul:columns anonid="columns"/>
+                    <xul:rows anonid="rows"/>
                 </xul:grid>
 
             </xul:hbox>
         </content>
         <implementation>
             <constructor><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            
-            var docids=this.getValue();
-            docids=docids.split('<BR>');
-            var rows=this.getChild('rows');
-            for (var i=0;i<docids.length; i++) {
-               var clo=this.cloneNode(false);
-               clo.setAttribute("multiple", "false");
-               clo.setAttribute("index", i);
-               clo.setAttribute("docid", docids[i]);
-               rows.appendChild(clo);
-            }
-            ]]>
+                    Components.utils.import("resource://modules/formater.jsm");
+
+                    var docids = this.getValue();
+                    docids = docids.split('<BR>');
+                    var rows = this.getChild('rows');
+                    for (var i = 0; i < docids.length; i++) {
+                        var clo = this.cloneNode(false);
+                        clo.setAttribute("multiple", "false");
+                        clo.setAttribute("index", i);
+                        clo.setAttribute("docid", docids[i]);
+                        rows.appendChild(clo);
+                    }
+                ]]>
             </constructor>
         </implementation>
     </binding>
 
     <!-- Enum attributes -->
     <binding
-        id="enum-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="enum-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute enum">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute enum">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="displayValue"
-                    class="dcpValue" />
+                        anonid="displayValue"
+                        class="dcpValue"/>
             </xul:hbox>
         </content>
         <implementation>
             <method name="getDisplayValue">
                 <body><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            return formater.getEnumLabel({attrid:this.attrid,famid:this.doc.getProperty('fromid'),key:this.getValue()});
-                ]]></body>
+                        Components.utils.import("resource://modules/formater.jsm");
+                        return formater.getEnumLabel({attrid : this.attrid, famid : this.doc.getProperty('fromid'), key : this.getValue()});
+                    ]]></body>
             </method>
         </implementation>
     </binding>
     <binding
-        id="enum-multiple-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="enum-multiple-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute enum">
-                <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
-                <xul:grid
+                    xbl:inherits="attrid"
                     flex="1"
-                    inherited="attrid">
-                    <xul:columns anonid="columns" />
-                    <xul:rows anonid="rows" />
+                    class="dcpAttribute enum">
+                <xul:dcpAttributeLabel
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
+                <xul:grid
+                        flex="1"
+                        inherited="attrid">
+                    <xul:columns anonid="columns"/>
+                    <xul:rows anonid="rows"/>
                 </xul:grid>
             </xul:hbox>
         </content>
         <implementation>
             <constructor><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            
-            var docids=this.getValue();
-            var rows=this.getChild('rows');
-            for (var i=0;i<docids.length; i++) {
-               var clo=this.cloneNode(false);
-               clo.setAttribute("multiple", "false");
-               clo.setAttribute("index", i);
-               rows.appendChild(clo);
-            }
-            ]]>
+                    Components.utils.import("resource://modules/formater.jsm");
+
+                    var docids = this.getValue();
+                    var rows = this.getChild('rows');
+                    for (var i = 0; i < docids.length; i++) {
+                        var clo = this.cloneNode(false);
+                        clo.setAttribute("multiple", "false");
+                        clo.setAttribute("index", i);
+                        rows.appendChild(clo);
+                    }
+                ]]>
             </constructor>
         </implementation>
     </binding>
     <!-- file attributes -->
     <binding
-        id="file-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="file-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute docid">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute docid">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <xul:label
-                    anonid="fileName"
-                    class="dcpValue plain" />
+                        anonid="fileName"
+                        class="dcpValue plain"/>
             </xul:hbox>
         </content>
         <implementation>
             <field name="fileName"><![CDATA[
                 this.getChild('fileName');
-            ]]></field>
+                ]]></field>
             <method name="openFile">
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/fileManager.jsm");
-                    fileManager.openFile({
-                        initid: this.doc.getInitid(),
-                        attrid: this.attrid,
-                        index: this.getAttribute('index')
-                    });
-                ]]></body>
+                        Components.utils.import("resource://modules/fileManager.jsm");
+                        fileManager.openFile({
+                            initid : this.doc.getInitid(),
+                            attrid : this.attrid,
+                            index :  this.getAttribute('index')
+                        });
+                    ]]></body>
             </method>
             <constructor><![CDATA[
-            Components.utils.import("resource://modules/formater.jsm");
-            Components.utils.import("resource://modules/docManager.jsm");
-            Components.utils.import("resource://modules/fileManager.jsm");
-                Components.utils.import("resource://modules/logger.jsm");
-            var valueNode = this.getChild('fileName');
-            var docid=this.doc.getInitid();
-            var lfile=fileManager.getFile({initid:docid, attrid:this.attrid, index:this.getAttribute('index')});
-            if (lfile) {
-              var title=lfile.leafName;
-              //logConsole("test file", lfile);
-              valueNode.value=title;
-              
-              valueNode.classList.add('link');
-            } 
-            
-            ]]>
+                    Components.utils.import("resource://modules/formater.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    Components.utils.import("resource://modules/logger.jsm");
+                    var valueNode = this.getChild('fileName');
+                    var docid = this.doc.getInitid();
+                    var lfile = fileManager.getFile({initid : docid, attrid : this.attrid, index : this.getAttribute('index')});
+                    if (lfile) {
+                        var title = lfile.leafName;
+                        //logConsole("test file", lfile);
+                        valueNode.value = title;
+
+                        valueNode.classList.add('link');
+                    }
+                ]]>
             </constructor>
         </implementation>
         <handlers>
             <handler
-                event="click"
-                button="0"><![CDATA[
-               
-                if(event.originalTarget == this.fileName){
-                    this.openFile();
-                }
-            ]]></handler>
+                    event="click"
+                    button="0"><![CDATA[
+                    if (event.originalTarget == this.fileName) {
+                        this.openFile();
+                    }
+                ]]></handler>
         </handlers>
     </binding>
     <binding
-        id="image-attr-view"
-        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+            id="image-attr-view"
+            extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox
-                xbl:inherits="attrid"
-                flex="1"
-                class="dcpAttribute image">
+                    xbl:inherits="attrid"
+                    flex="1"
+                    class="dcpAttribute image">
                 <xul:dcpAttributeLabel
-                    anonid="attrLabel"
-                    xbl:inherits="mode,required,value=label" />
+                        anonid="attrLabel"
+                        xbl:inherits="mode,required,value=label"/>
                 <html:div class="dcpValue">
                     <html:img
-                        class="dcpImage"
-                        anonid="imageField" />
+                            class="dcpImage"
+                            anonid="imageField"/>
                 </html:div>
             </xul:hbox>
         </content>
         <implementation>
             <field name="imageField"><![CDATA[
                 this.getChild('imageField');
-            ]]></field>
+                ]]></field>
             <method name="openFile">
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/fileManager.jsm");
-                    fileManager.openFile({
-                        initid: this.doc.getInitid(),
-                        attrid: this.attrid,
-                        index: this.index
-                    });
-                ]]></body>
+                        Components.utils.import("resource://modules/fileManager.jsm");
+                        fileManager.openFile({
+                            initid : this.doc.getInitid(),
+                            attrid : this.attrid,
+                            index :  this.index
+                        });
+                    ]]></body>
             </method>
-            <constructor><![CDATA[     
-                Components.utils.import("resource://modules/formater.jsm");
-                Components.utils.import("resource://modules/fileManager.jsm");
-                
-                var valueNode = this.getChild('fileName');
-                var lfile=fileManager.getFile({
-                    initid:this.doc.getInitid(),
-                    attrid:this.attrid,
-                    index:this.index
-                });
-                if (lfile) {
-                    this.imageField.tooltipText = lfile.leafName;
-                    this.imageField.src=formater.getURI({file:lfile}).spec;
-                    this.imageField.classList.add('link');//.className+=' link';
-                }
-            ]]>
+            <constructor><![CDATA[
+                    Components.utils.import("resource://modules/formater.jsm");
+                    Components.utils.import("resource://modules/fileManager.jsm");
+
+                    var valueNode = this.getChild('fileName');
+                    var lfile = fileManager.getFile({
+                        initid : this.doc.getInitid(),
+                        attrid : this.attrid,
+                        index :  this.index
+                    });
+                    if (lfile) {
+                        this.imageField.tooltipText = lfile.leafName;
+                        this.imageField.src = formater.getURI({file : lfile}).spec;
+                        this.imageField.classList.add('link');//.className+=' link';
+                    }
+                ]]>
             </constructor>
         </implementation>
         <handlers>
             <handler
-                event="click"
-                button="0"><![CDATA[
-               
-                if(event.originalTarget == this.imageField){
-                    this.openFile();
-                }
-            ]]></handler>
+                    event="click"
+                    button="0"><![CDATA[
+                    if (event.originalTarget == this.imageField) {
+                        this.openFile();
+                    }
+                ]]></handler>
         </handlers>
     </binding>
 </bindings>
