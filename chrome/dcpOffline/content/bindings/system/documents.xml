@@ -52,6 +52,9 @@
                 readonly="true">
                 <getter><![CDATA[
                     var e = document.activeElement;
+                    if (e.localName == "iframe") {
+                        e = document.getBindingParent(e.parentNode);
+                    }
                     while(e && (e.localName !== 'dcpAttribute')){
                         e = document.getBindingParent(e);
                     }

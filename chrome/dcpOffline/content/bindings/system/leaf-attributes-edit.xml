@@ -209,6 +209,15 @@
                 ]]></body>
             </method>
 
+            <property
+                name="bindingValue"
+                readonly="true">
+                <getter><![CDATA[
+                        return this.editor.getData();
+                    ]]>
+                </getter>
+            </property>
+
             <method name="getCKEditorConfig">
                 <body><![CDATA[
                     return this.getAttribute('CKEditorConfig');
@@ -223,7 +232,7 @@
                     //alert("frame loaded");
                     var contentWindow = this.getChild('displayValue').contentWindow;
                     this.editor = contentWindow.initEditor(this.getCKEditorConfig());
-                    this.editor.on('blur', function(){this.setValue(editor.getData())}, this);
+                    this.editor.on('blur', function(){this.saveValue()}, this);
 
                     this.loaded = true;
                     this.reloadValue();
