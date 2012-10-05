@@ -145,6 +145,7 @@
                 <body><![CDATA[
                     try {
                         this.checkRequiredAttributes();
+                        this.synchronizeFile();
                         if(this.doc.inMemoryDoc){
                             this.onBeforeLocalCreate();
                             this.doc.store({recomputeTitle:true});
@@ -523,6 +524,67 @@
                         throw msg;
                     }
                 ]]></body>
+            </method>
+
+            <method name="synchronizeFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    var currentModifiedFile, currentModifiedFileKey, suppressFile;
+                    suppressFile = function suppressFile(config) {
+                        return fileManager.deleteFile(config);
+                    };
+
+                    this._modifiedAttrFiles = this._modifiedAttrFiles || {};
+
+                    for (currentModifiedFileKey in this._modifiedAttrFiles) {
+                        currentModifiedFile = this._modifiedAttrFiles[currentModifiedFileKey];
+                        if (currentModifiedFile.operation === "suppress") {
+                            suppressFile(currentModifiedFile.config);
+                        }else if (currentModifiedFile.operation === "add") {
+                            try  {
+                                suppressFile(currentModifiedFile.config);
+                            }catch(e) {
+                                logError(e);
+                            }
+                            fileManager.saveFile(currentModifiedFile.config);
+                        }else {
+                            throw "Unknown file synchro action";
+                        }
+                    }
+
+                    ]]></body>
+            </method>
+
+            <method name="notifyToSuppressFile">
+                <parameter name="config" />
+                <body><![CDATA[
+
+                    this._modifiedAttrFiles = this._modifiedAttrFiles || {};
+
+                    if (config && config.index && config.attrid) {
+                        this._modifiedAttrFiles[config.attrid+"_"+config.index] = {
+                            config :config,
+                            operation : "suppress"
+                        };
+                    }
+                    ]]>
+                </body>
+            </method>
+
+            <method name="notifyToAddFile">
+                <parameter name="config" />
+                <body><![CDATA[
+
+                        this._modifiedAttrFiles = this._modifiedAttrFiles || {};
+
+                        if (config && config.index && config.attrid) {
+                            this._modifiedAttrFiles[config.attrid+"_"+config.index] = {
+                                config :config,
+                                operation : "add"
+                            };
+                        }
+                    ]]>
+                </body>
             </method>
 
             <constructor><![CDATA[

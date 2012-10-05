@@ -295,36 +295,39 @@ var fileManager = {
                 initid : config.initid
             }).getValue(config.attrid, config.index);
 
+            /* BEWARE : config.index is an array if the attr is multiple and the code below cannot handle it */
+
             if (!config.index) {
                 return null;
-                throw (new Error('file attr [' + config.attrid
-                        + '] does not exists'));
             }
-            var r = storageManager
-                    .execQuery({
-                        query : 'SELECT path from '
-                                + TABLE_FILES
-                                + ' WHERE "initid" = :initid AND "attrid" = :attrid AND "index" = :index',
-                        params : {
-                            initid : config.initid,
-                            attrid : config.attrid,
-                            index : config.index
-                        }
-                    });
+            if (!Array.isArray(config.index)) {
+                var r = storageManager
+                   .execQuery({
+                       query : 'SELECT path from '
+                               + TABLE_FILES
+                               + ' WHERE "initid" = :initid AND "attrid" = :attrid AND "index" = :index',
+                       params : {
+                           initid : config.initid,
+                           attrid : config.attrid,
+                           index : config.index
+                       }
+                   });
 
-            if (r.length > 0) {
-                config.path = r[0].path;
+               if (r.length > 0) {
+                   config.path = r[0].path;
 
-                var aFile = Services.dirsvc.get("TmpD", Ci.nsILocalFile);
-                aFile.initWithPath(config.path);
+                   var aFile = Services.dirsvc.get("TmpD", Ci.nsILocalFile);
+                   aFile.initWithPath(config.path);
 
-                if (aFile.exists()) {
-                    return aFile;
-                } else {
-                    throw (new Error('file [' + config.path
-                            + '] does not exists'));
-                }
+                   if (aFile.exists()) {
+                       return aFile;
+                   } else {
+                       throw (new Error('file [' + config.path
+                               + '] does not exists'));
+                   }
+               }
             }
+
         }
         return null;
     },
