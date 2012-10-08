@@ -52,6 +52,9 @@
                 readonly="true">
                 <getter><![CDATA[
                     var e = document.activeElement;
+                    if (e.localName == "iframe") {
+                        e = document.getBindingParent(e.parentNode);
+                    }
                     while(e && (e.localName !== 'dcpAttribute')){
                         e = document.getBindingParent(e);
                     }
@@ -145,6 +148,7 @@
                 <body><![CDATA[
                     try {
                         this.checkRequiredAttributes();
+                        this.synchronizeFile();
                         if(this.doc.inMemoryDoc){
                             this.onBeforeLocalCreate();
                             this.doc.store({recomputeTitle:true});
@@ -304,32 +308,30 @@
                     if(networkChecker.isOffline()){
                         alert("You can only abort when online");
                     } else {
-                        try{
-                             var msgTitle=this.translate("document.confirm.abort.title");
-                             var msgText=this.translate("document.confirm.abort.message",[this.doc.getTitle()]);
-                             var wantAbort = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                .getService(Components.interfaces.nsIPromptService)
-                                .confirm(null, msgTitle, msgText);
-                             if (wantAbort) {
-                                var domainId = docManager.getActiveDomain();
-                                var domain = context.getDocument({
-                                    id : domainId
-                                });
-                                var docid=this.initid;
-                                var me=this;
-                                offlineSync.revertDocument({
-                                    domain: domain,
-                                    initid: this.initid,
-                                    onAfterRevert:function() {
-                                       me.reinit();
-                                       applicationEvent.publish("postSynchronize",{});
-                                       tryToOpenDocument({documentId : docid});
-                                    }
-                                });
-                            }
-                        } catch(e) {
-                            logError(e, "error when reverting document "+this.initid);
-                            this.warning(e);
+                         var msgTitle=this.translate("document.confirm.abort.title");
+                         var msgText=this.translate("document.confirm.abort.message",[this.doc.getTitle()]);
+                         var wantAbort = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService)
+                            .confirm(null, msgTitle, msgText);
+                         if (wantAbort) {
+                            var domainId = docManager.getActiveDomain();
+                            var domain = context.getDocument({
+                                id : domainId
+                            });
+                            var docid=this.initid;
+                            var me=this;
+                             applicationEvent.publish("simpleSynchronize", {
+                                  method : "revertDocument",
+                                  options : {
+                                      domain: domain,
+                                      initid: docid,
+                                      onAfterRevert:function() {
+                                         me.reinit();
+                                         applicationEvent.publish("postSynchronize",false);
+                                         tryToOpenDocument({documentId : docid});
+                                      }
+                                  }
+                              });
                         }
                     }
                 ]]></body>
@@ -351,27 +353,24 @@
                          };
                         applicationEvent.publish("askForCloseDocument", param);
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.revertDocument({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "revertDocument",
+                            options : {
                                 domain: domain,
-                                initid: this.initid,
+                                initid: docid,
                                 onAfterRevert:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                    tryToOpenDocument({documentId : docid});
                                 }
-                            });
-
-                        } catch(e) {
-                            logError(e, "error when reverting document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -385,30 +384,30 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only revert when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.pushDocuments({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "pushDocuments",
+                            options : {
                                 domain: domain,
-                                pushOnly: this.initid,
+                                pushOnly: docid,
                                 onError:function(result) {
+                                   applicationEvent.publish("postSynchronize", result);
                                    logConsole("SYNCHRO-ONE ERROR",result);
                                 },
-                                onComplete:function() {
+                                onComplete:function(result) {
                                     offlineSync.retrieveReport({domain:domain});
                                     me.reinit();
-                                    applicationEvent.publish("postSynchronize",{});
+                                    applicationEvent.publish("postSynchronize",result);
+                                    logConsole("result",result);
                                     tryToOpenDocument({documentId : docid});
-                                 }   
-                              });
-                        } catch(e) {
-                            logError(e, "error when synchronize document "+this.initid);
-                            this.warning(e);
-                        }
+                                 }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -422,25 +421,22 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only unlink when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var me=this;
-                            offlineSync.unlinkDocument({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "unlinkDocument",
+                            options : {
                                 domain: domain,
                                 initid: this.initid,
                                 onAfterUnlink:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                 }
-                            });
-
-                        } catch(e) {
-                            logError(e, "error when unlink document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -454,28 +450,25 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only book when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
 
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.bookDocument({
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "bookDocument",
+                            options : {
                                 domain: domain,
                                 initid: this.initid,
                                 onAfterBook:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
-                                   tryToOpenDocument({documentId : docid});
+                                   applicationEvent.publish("postSynchronize",false);
+                                    tryToOpenDocument({documentId : docid});
                                 }
-                            });
-
-                        } catch(e) {
-                            logError(e, "error when booking document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -490,29 +483,24 @@
                     if(networkChecker.isOffline()){
                         alert("(FIXME) you can only book when online");
                     } else {
-                        try{
-                            var domainId = docManager.getActiveDomain();
-                            var domain = context.getDocument({
-                                id : domainId
-                            });
-                            var docid=this.initid;
-                            var me=this;
-                            offlineSync.unbookDocument({
+                        var domainId = docManager.getActiveDomain();
+                        var domain = context.getDocument({
+                            id : domainId
+                        });
+                        var docid=this.initid;
+                        var me=this;
+                        applicationEvent.publish("simpleSynchronize", {
+                            method : "unbookDocument",
+                            options : {
                                 domain: domain,
                                 initid: this.initid,
-
                                 onAfterUnbook:function() {
                                    me.reinit();
-                                   applicationEvent.publish("postSynchronize",{});
+                                   applicationEvent.publish("postSynchronize",false);
                                    tryToOpenDocument({documentId : docid});
                                 }
-                            });
-
-
-                        } catch(e) {
-                            logError(e, "error when unbooking document "+this.initid);
-                            this.warning(e);
-                        }
+                            }
+                        });
                     }
                 ]]></body>
             </method>
@@ -541,6 +529,67 @@
                 ]]></body>
             </method>
 
+            <method name="synchronizeFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    var currentModifiedFile, currentModifiedFileKey, suppressFile;
+                    suppressFile = function suppressFile(config) {
+                        return fileManager.deleteFile(config);
+                    };
+
+                    this._modifiedAttrFiles = this._modifiedAttrFiles || {};
+
+                    for (currentModifiedFileKey in this._modifiedAttrFiles) {
+                        currentModifiedFile = this._modifiedAttrFiles[currentModifiedFileKey];
+                        if (currentModifiedFile.operation === "suppress") {
+                            suppressFile(currentModifiedFile.config);
+                        }else if (currentModifiedFile.operation === "add") {
+                            try  {
+                                suppressFile(currentModifiedFile.config);
+                            }catch(e) {
+                                logError(e);
+                            }
+                            fileManager.saveFile(currentModifiedFile.config);
+                        }else {
+                            throw "Unknown file synchro action";
+                        }
+                    }
+
+                    ]]></body>
+            </method>
+
+            <method name="notifyToSuppressFile">
+                <parameter name="config" />
+                <body><![CDATA[
+
+                    this._modifiedAttrFiles = this._modifiedAttrFiles || {};
+
+                    if (config && config.index && config.attrid) {
+                        this._modifiedAttrFiles[config.attrid+"_"+config.index] = {
+                            config :config,
+                            operation : "suppress"
+                        };
+                    }
+                    ]]>
+                </body>
+            </method>
+
+            <method name="notifyToAddFile">
+                <parameter name="config" />
+                <body><![CDATA[
+
+                        this._modifiedAttrFiles = this._modifiedAttrFiles || {};
+
+                        if (config && config.index && config.attrid) {
+                            this._modifiedAttrFiles[config.attrid+"_"+config.index] = {
+                                config :config,
+                                operation : "add"
+                            };
+                        }
+                    ]]>
+                </body>
+            </method>
+
             <constructor><![CDATA[
                 try{
                     Components.utils.import("resource://modules/events.jsm");
@@ -554,18 +603,6 @@
                     if(state){
                         this.setAttribute('state', state);
                     }
-                    
-                    /*
-                    var hasMode = this.hasAttribute('mode');
-                    if(! hasMode ){
-                        this.setAttribute('mode', 'view');
-                    } else {
-                        var mode = this.getAttribute('mode');
-                        if( (mode !== 'view') && (mode !== 'edit') ){
-                            this.setAttribute('mode', 'view');
-                        }
-                    }
-                    */
                     
                     this.hooks = this.hooks || {};
                     this.hooks.preClose = function preCloseHook(config){

@@ -27,9 +27,9 @@ window.onload = function() {
         } catch(e) {
             logError(e, "application could not initialize - exiting\n");
             applicationEvent.publish("askForCloseApplication");
-        };
+        }
     }, 100);
-}
+};
 
 function handleCommandLine(){
     var cmdLine = window.arguments[0];
@@ -193,6 +193,8 @@ function initListeners() {
     applicationEvent.subscribe("postSynchronize", updateAbstractList);
     applicationEvent.subscribe("postSynchronize", reloadCreatableFamilies);
 
+    applicationEvent.subscribe("simpleSynchronize", openSimpleSynchro);
+
     applicationEvent.subscribe("postUpdateFamilyList", setPrefCurrentSelectedFamily);
 
     applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
@@ -296,6 +298,15 @@ function openNewDocumentDialog() {
 function openLog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/log.xul", "",
     "chrome,modal");
+}
+/**
+ * Open the simpleSynchro dialog
+ * Private method : you should never use it
+ *
+ * @private
+ */
+function openSimpleSynchro(options) {
+    window.openDialog("chrome://dcpoffline/content/dialogs/simpleSynchro.xul", "","chrome,modal", options);
 }
 
 // Public Methods

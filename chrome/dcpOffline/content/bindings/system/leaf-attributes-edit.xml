@@ -118,7 +118,7 @@
                 } else {
                     this.setAttribute('collapsed', true);
                 }
-                
+
                 if(this.doc.inMemoryDoc){
                     if(this.hasAttribute('defaultValue') && (this.getAttribute('defaultValue')!=='') ){
                         this.setValue(this.getAttribute('defaultValue'));
@@ -196,9 +196,9 @@
                     flex="1" />
             </xul:vbox>
         </content>
-        
+
         <implementation>
-        
+
             <method name="reloadValue">
                 <body><![CDATA[
                     if(this.loaded){
@@ -208,23 +208,32 @@
                     }
                 ]]></body>
             </method>
-            
+
+            <property
+                name="bindingValue"
+                readonly="true">
+                <getter><![CDATA[
+                        return this.editor.getData();
+                    ]]>
+                </getter>
+            </property>
+
             <method name="getCKEditorConfig">
                 <body><![CDATA[
                     return this.getAttribute('CKEditorConfig');
                 ]]></body>
             </method>
-            
+
         </implementation>
-        
+
         <handlers>
             <handler event="DOMContentLoaded"><![CDATA[
                 if(event.originalTarget == this.getChild('displayValue').contentDocument ){
                     //alert("frame loaded");
                     var contentWindow = this.getChild('displayValue').contentWindow;
                     this.editor = contentWindow.initEditor(this.getCKEditorConfig());
-                    this.editor.on('blur', function(){this.setValue(editor.getData())}, this);
-                    
+                    this.editor.on('blur', function(){this.saveValue()}, this);
+
                     this.loaded = true;
                     this.reloadValue();
                     //alert("value reloaded");
@@ -257,8 +266,8 @@
             <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    if( ( value === '' ) || 
-                        ( ( ! isNaN(value) ) && 
+                    if( ( value === '' ) ||
+                        ( ( ! isNaN(value) ) &&
                           ( parseInt(value) == value ) ) ){
                         this.setCustomValidity("");
                     } else {
@@ -299,9 +308,9 @@
                 <parameter name="value" />
                 <body><![CDATA[
                     var formatedValue = value.replace(/,/,'.');
-                    
-                    if( ( value === '' ) || 
-                        ( ( ! isNaN(formatedValue) ) && 
+
+                    if( ( value === '' ) ||
+                        ( ( ! isNaN(formatedValue) ) &&
                           ( parseFloat(formatedValue) == formatedValue) ) ){
                         this.setCustomValidity("");
                     } else {
@@ -462,25 +471,25 @@
                 readonly="true">
                 <getter><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
-                    try{
-                        var aFile = fileManager.getFile({
-                            initid: this.doc.getInitid(),
-                            attrid: this.attrid,
-                            index: this.index
-                        });
-                        if(aFile && aFile.exists()){
-                            return aFile.path;
+                    var filePath = this.doc.getValue(this.attrid, this.index), aFile;
+                    if (filePath) {
+                        try{
+                            aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                            aFile.initWithPath(filePath);
+                            if(aFile && aFile.exists()){
+                                return aFile.path;
+                            }
+                        } catch(e) {
+                            logError(e,
+                                "bindingValue of attribute ["
+                                + this.attrid
+                                + "] on document ["
+                                + this.doc.getInitid()
+                                + "] at index ["
+                                + this.index
+                                +"]"
+                            );
                         }
-                    } catch(e) {
-                        logError(e,
-                            "bindingValue of attribute ["
-                            + this.attrid
-                            + "] on document ["
-                            + this.doc.getInitid()
-                            + "] at index ["
-                            + this.index
-                            +"]"
-                        );
                     }
                 ]]></getter>
             </property>
@@ -492,21 +501,23 @@
                     try{
                         Components.utils.import("resource://modules/fileManager.jsm");
 
-                        var value = this.checkValue(value);
+                        value = this.checkValue(value);
 
-                        //copy file and store it
-                        var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
-                        aFile.initWithPath(value);
-                        fileManager.saveFile({
-                            initid: this.doc.getInitid(),
-                            attrid: this.attrid,
-                            writable: true,
-                            basename: aFile.leafName,
-                            aFile: aFile,
-                            forceCopy: true,
-                            index: this.index
-                        });
-
+                        if (value) {
+                            var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                            aFile.initWithPath(value);
+                            this.documentNode.notifyToAddFile({
+                               initid: this.doc.getInitid(),
+                               attrid: this.attrid,
+                               writable: true,
+                               basename: aFile.leafName,
+                               aFile: aFile,
+                               forceCopy: true,
+                               index: this.index
+                            });
+                        }
+                        value = value || "";
+                        this.doc.setValue(this.attrid, value, this.index);
                         this.reloadValue();
                         return true;
                     } catch(e){
@@ -520,33 +531,45 @@
             <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
-                    aFile.initWithPath(value);
-                    if(aFile.exists()){
+                    if (value) {
+                        var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                        aFile.initWithPath(value);
+                        if(aFile.exists()){
+                            return value;
+                        } else {
+                            throw new attrCheckException("the file '" + value +"' does not exists");
+                        }
+                    }else {
                         return value;
-                    } else {
-                        throw new attrCheckException("the file '" + value +"' does not exists");
                     }
+
                 ]]></body>
             </method>
 
             <method name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
-                    try{
-                        var aFile = fileManager.getFile({
-                            initid:this.doc.getInitid(),
-                            attrid:this.attrid,
-                            index:this.index
-                        });
-                        if(aFile && aFile.exists()){
-                            this.inputField.value = aFile.leafName;
-                        } else {
-                            this.inputField.value = "";
+                    var value = this.getValue(), aFile;
+
+                    if (value) {
+                        try {
+                            aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                            aFile.initWithPath(value);
+                            if(aFile && aFile.exists()){
+                                value = aFile.leafName;
+                            }
+                        } catch(e) {
+                            aFile = fileManager.getFile({
+                                initid:this.doc.getInitid(),
+                                attrid:this.attrid,
+                                index:this.index
+                            });
+                            if(aFile && aFile.exists()){
+                                value = aFile.leafName;
+                            }
                         }
-                    } catch(e) {
-                        this.inputField.value = "";
                     }
+                    this.inputField.value = value;
                 ]]></body>
             </method>
 
@@ -572,19 +595,13 @@
             <method name="deleteFile">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
-                    try{
-                        fileManager.deleteFile({
+                    this.documentNode.notifyToSuppressFile({
                             initid:this.doc.getInitid(),
                             attrid:this.attrid,
                             index:this.index
                         });
-                        this.reloadValue();
-                    } catch(e) {
-                        logError(e, "could not delete file for document"
-                                + " initid: " + this.doc.getInitid()
-                                + " attrid: " + this.attrid
-                                + " index: " + this.index);
-                    }
+                    this.doc.setValue(this.attrid, "", this.index);
+                    this.reloadValue();
                 ]]></body>
             </method>
 
@@ -734,7 +751,7 @@
             <method name="reloadValue">
                 <body><![CDATA[
                     var color = this.getValue();
-                    dump("will set color at "+color+" for "+this.attrid+"\n");
+                    //dump("will set color at "+color+" for "+this.attrid+"\n");
                     var valueNode = this.getChild('displayValue');
                     if(valueNode){
                         setTimeout(function(){
@@ -949,11 +966,11 @@
             <method name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/formater.jsm");
-                    
+
                     for(var i = this.multiBox.itemCount-1; i >=0 ; i--){
                         this.multiBox.removeItemAt(i);
                     }
-                    
+
                     var values = this.getValue();
                     if(values !== ''){
                         if( !Array.isArray(values) ){
@@ -993,7 +1010,7 @@
                                 break;
                             }
                         }
-                        
+
                         if(addItem){
                             var value = this.bindingValue;
                             value.push(selectedItem.value);
