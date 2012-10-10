@@ -267,3 +267,11 @@ dcpDocument [visibility=H],
 dcpDocument [visibility=I] {
     visibility: collapse;
 }
+
+dcpDocument[mode=edit] *[visibility=R]{
+    visibility: collapse;
+}
+
+dcpDocument[mode=view] *[visibility=O]{
+    visibility: collapse;
+}
