@@ -28,6 +28,7 @@
                     xbl:inherits="disabled"
                     editable="false"
                     disableautoselect="true"
+                    sizetopopup = "none"
                     anonid="displayValue"
                     class="dcpValue">
                     <xul:menupopup
