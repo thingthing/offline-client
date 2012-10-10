@@ -95,7 +95,7 @@
             <richlistbox id="familyList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                 <template>
                     <query><![CDATA[
-                        SELECT title, icon, famid 
+                        SELECT title, icon, famid, name
                         FROM families 
                         WHERE famid IN 
                             (SELECT initid
@@ -106,7 +106,7 @@
                         <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
                     </query>
                     <action>
-                        <richlistitem uri="?" value="?famid" onclick="tryToChangeFamily(this.value);">
+                        <richlistitem uri="?" value="?famid" data-famName="?name" onclick="tryToChangeFamily(this.value);">
                             <hbox >
                                 <image src="file://?icon" style="margin : 2px" tooltiptext="?title" width="48px" height="48px"/>
                             </hbox >
