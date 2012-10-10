@@ -191,7 +191,7 @@
                     }
                     var icon=null;
                     
-                    if(value){
+                    if(value && !Array.isArray(value)){
                         var sdoc=docManager.getLocalDocument({initid:value});
                         if (! sdoc) sdoc=docManager.getLocalDocument({name:this.getAttribute('relationFamily')});
                         if (sdoc) {
