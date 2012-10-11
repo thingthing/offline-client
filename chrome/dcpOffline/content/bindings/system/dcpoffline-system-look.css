@@ -141,7 +141,7 @@ dcpAttribute[type=frame] groupbox {
 }
 
 dcpAttribute[mode=edit][type=htmltext]{
-    min-height: 350px;
+    min-height: 150px;
 }
 
 .dcpLabel {

@@ -1,47 +1,101 @@
 <html>
 <head>
-<script type="text/javascript" src="../../ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="../../ckeditor/ckeditor.js"></script>
 </head>
 <body>
-    <textarea id="editorWrapper" style="width: 100%; height: 100%;"></textarea>
-    <script type="text/javascript">
-        function initEditor(config) {
-            if(config){
-                config = JSON.parse(config);
-            } else {
-                var config = {
-                    toolbar : [
-                        {
-                            name : 'basicstyles',
-                            items : [ 'Bold', 'Italic', 'Underline', 'Strike',
-                                    'Subscript', 'Superscript', '-',
-                                    'RemoveFormat' ]
-                        }, {
-                            name : 'paragraph',
-                            items : [ 'NumberedList', 'BulletedList', '-',
-                                    'Outdent', 'Indent', '-', 'JustifyLeft',
-                                    'JustifyCenter', 'JustifyRight',
-                                    'JustifyBlock' ]
-                        }, {
-                            name : 'links',
-                            items : [ 'Link', 'Unlink' ]
-                        }, {
-                            name : 'insert',
-                            items : [ 'Image', 'Table', 'HorizontalRule' ]
-                        }, {
-                            name : 'styles',
-                            items : [ 'Format' ]
-                        }
-                    ]
-                };
+<textarea id="editorWrapper" style="width: 100%; height: 100%;"></textarea>
+<script type="text/javascript">
+    window.htmlText = {};
+
+    window.htmlText.toolbars = {
+        toolbar_Full :    [
+            { name : 'document', items : [ 'Source', '-', 'NewPage', 'DocProps', 'Preview', 'Print', '-', 'Templates' ] },
+            { name : 'clipboard', items : [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name : 'editing', items : [ 'Find', 'Replace', '-', 'SelectAll', '-' ] },
+            { name : 'forms', items : [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+                'HiddenField' ] },
+            '/',
+            { name : 'basicstyles', items : [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+            { name : 'paragraph', items : [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv',
+                '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl' ] },
+            { name : 'links', items : [ 'Link', 'Unlink' ] },
+            { name : 'insert', items : [ 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
+            '/',
+            { name : 'styles', items : [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name : 'colors', items : [ 'TextColor', 'BGColor' ] },
+            { name : 'tools', items : [ 'Maximize', 'ShowBlocks', '-', 'About' ] }
+        ],
+        toolbar_Default : [
+            { name : 'document', items : [ 'Source'] },
+            { name : 'clipboard', items : [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name : 'editing', items : [ 'Find', 'Replace', '-', 'SelectAll' ] },
+            { name : 'basicstyles', items : [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+            { name : 'paragraph', items : [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv',
+                '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl' ] },
+            { name : 'links', items : [ 'Link', 'Unlink' ] },
+            { name : 'insert', items : [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak', 'Iframe' ] },
+            { name : 'styles', items : [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name : 'colors', items : [ 'TextColor', 'BGColor' ] },
+            { name : 'tools', items : [ 'Maximize', 'ShowBlocks', '-', 'About' ] }
+        ],
+        toolbar_Simple :  [
+            { name : 'basicstyles', items : [ 'Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat' ] },
+            { name : 'paragraph', items : [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-',
+                '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+            { name : 'links', items : [ 'Link', 'Unlink' ] },
+            { name : 'insert', items : [ 'Image', 'Table', 'SpecialChar' ] },
+            { name : 'styles', items : [ 'Format', 'FontSize' ] },
+            { name : 'colors', items : [ 'TextColor', 'BGColor' ] },
+            { name : 'tools', items : [ 'Maximize', 'Source', '-', 'About' ] }
+        ],
+        toolbar_Basic :   [
+            { name : 'links', items : ['Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', '-', 'About'] }
+        ]
+    };
+
+    window.htmlText.defaultOption = function (config) {
+        var property;
+
+        for (property in window.htmlText.toolbars) {
+            this[property] = window.htmlText.toolbars[property];
+        }
+
+        for (property in config) {
+            if (config.hasOwnProperty(property)) {
+                this[property] = config[property];
             }
-            editorInstance = CKEDITOR.replace('editorWrapper', config);
-            //  editorInstance = CKEDITOR.replace('editorWrapper', {toolbar:'Basic'});
-            return editorInstance;
-        };
-        function getEditorWrapper() {
-            return document.getElementById('editorWrapper')
-        };
-    </script>
+        }
+    };
+
+    window.htmlText.defaultOption.prototype = {
+        toolbar :        'Simple',
+        resize_enabled : false,
+        fullPage :       false,
+        font_names :     'serif;sans-serif;cursive;fantasy;monospace',
+        removePlugins :  'elementspath',
+        on: {
+            'instanceReady': function (evt) { evt.editor.execCommand('maximize'); }
+        }
+    };
+
+    window.htmlText.initEditor = function initEditor(htmlId, config) {
+        config = config || {};
+        return CKEDITOR.replace(htmlId, new window.htmlText.defaultOption(config));
+    };
+
+    window.initEditor = function initEditor(config) {
+        var editorInstance;
+        if (config) {
+            config = JSON.parse(config);
+        }
+        editorInstance = window.htmlText.initEditor('editorWrapper', config);
+        return editorInstance;
+    };
+
+    window.getEditorWrapper = function getEditorWrapper() {
+        return document.getElementById('editorWrapper')
+    }
+
+</script>
 </body>
 </html>
