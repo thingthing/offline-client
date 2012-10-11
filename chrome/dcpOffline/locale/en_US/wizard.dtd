@@ -13,3 +13,4 @@ First step, use the following button...">
 <!ENTITY wizard.try.authent                         "Clic here to test your connection...">
 <!ENTITY wizard.initialization.selectDomain         "Select your domain">
 <!ENTITY wizard.try.synchronize                     "Start the first synchronisation test...">
+<!ENTITY wizard.initialization.end                    "Your client is initialized. You can use it.">
