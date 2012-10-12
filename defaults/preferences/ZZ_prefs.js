@@ -34,6 +34,9 @@ pref("offline.application.modeOffline", false);
 pref("network.protocol-handler.expose.http", false);
 pref("network.protocol-handler.warn-external.http", false);
 
+/* Default locale*/
+pref("general.useragent.locale", "fr");
+
 /* debug prefs */
 /*
 pref("offline.application.debug.locale", "kl_GN");
