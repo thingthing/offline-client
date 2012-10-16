@@ -15,3 +15,4 @@ accessible. En cas de doute, contactez votre administrateur.
 <!ENTITY wizard.try.authent                         "cliquez ici pour tester la connexion...">
 <!ENTITY wizard.initialization.selectDomain         "Sélectionnez le domaine à utiliser">
 <!ENTITY wizard.try.synchronize                     "Lancer le test de synchronisation...">
+<!ENTITY wizard.initialization.end                    "Votre client est maintenant initialisé. Vous pouvez commencer à l'utiliser dès maintenant.">

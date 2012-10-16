@@ -786,6 +786,7 @@
                 <xul:menulist
                     anonid="displayValue"
                     class="dcpValue"
+                    sizetopopup = "none"
                     xbl:inherits="disabled">
                     <xul:menupopup
                         datasources="profile:storage.sqlite"

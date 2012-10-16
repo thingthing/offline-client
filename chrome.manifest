@@ -1,3 +1,4 @@
 manifest chrome/dcpOffline/dcpoffline-base.manifest
 manifest chrome/customization/dcpoffline-customization.manifest
 manifest chrome/ckeditor/dcpoffline-ckeditor.manifest
+manifest chrome/translation_xul_fr.manifest

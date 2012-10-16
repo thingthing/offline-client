@@ -214,6 +214,7 @@
                     currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
                     columnFlex = this.childAttributes[i].getAttribute('flex');
                     currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
+                    currentColumn.setAttribute('attrid', this.childAttributes[i].getAttribute('attrid'));
                     
                     visibility = this.childAttributes[i].getAttribute('visibility');
                     if(visibility == 'R' || visibility == 'H'){

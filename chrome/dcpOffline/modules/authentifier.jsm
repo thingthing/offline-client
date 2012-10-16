@@ -70,9 +70,7 @@ var authentificator = function() {
                 var that = this;
                 
                 return function(){
-                    var currentProfile;
-                    var user;
-                    
+                    var user, locale;
                     
                     user = context.setAuthentification({
                         login : that.currentLogin,
@@ -94,13 +92,14 @@ var authentificator = function() {
                             if (user.lastname) {
                                 Preferences.set("offline.user.lastName", user.lastname);
                             }
-                            if (user.locale) {
+                            locale = user.locale.substring(0, 2);
+                            if (locale) {
                                 if (!Preferences.get("offline.application.debug.locale", false)) {
-                                    if (Preferences.get("general.useragent.locale") != user.locale) {
-                                        if (that.switchLocale(user.locale)) {
+                                    if (Preferences.get("general.useragent.locale") !== locale) {
+                                        if (that.switchLocale(locale)) {
                                             applicationEvent.publish("needRestart", "changeLocal");
                                         }else {
-                                            logDebug("unable to switch local because it doesn't exist "+user.locale);
+                                            logDebug("unable to switch local because it doesn't exist "+locale);
                                         }
                                     }
                                 }else {

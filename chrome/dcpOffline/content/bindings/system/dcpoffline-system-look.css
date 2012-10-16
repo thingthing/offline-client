@@ -141,7 +141,7 @@ dcpAttribute[type=frame] groupbox {
 }
 
 dcpAttribute[mode=edit][type=htmltext]{
-    min-height: 350px;
+    min-height: 150px;
 }
 
 .dcpLabel {
@@ -265,5 +265,13 @@ dcpAttribute[mode=edit][type=htmltext][visibility=H]{
 
 dcpDocument [visibility=H],
 dcpDocument [visibility=I] {
+    visibility: collapse;
+}
+
+dcpDocument[mode=edit] *[visibility=R]{
+    visibility: collapse;
+}
+
+dcpDocument[mode=view] *[visibility=O]{
     visibility: collapse;
 }

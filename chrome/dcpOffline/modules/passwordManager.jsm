@@ -25,10 +25,10 @@ var passwordManager = function() {
                     if (password == currentLogin.password){
                         return {result : true};
                     }else {
-                        return {result : false, reason : this.translate.get("passwordManager.loginUnknown")};
+                        return {result : false, reason : this.translate.get("passwordManager.passwordMismatch")};
                     }
                 }
-                return {result : false, reason : this.translate.get("passwordManager.passwordMismatch")};
+                return {result : false, reason : this.translate.get("passwordManager.loginUnknown")};
             },
 
             updatePassword : function(login, password) {

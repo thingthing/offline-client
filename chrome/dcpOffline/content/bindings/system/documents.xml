@@ -173,7 +173,7 @@
             <method name="saveFocusedAttribute">
                 <body><![CDATA[
                     var focusedAttribute = this.focusedAttribute;
-                    if(focusedAttribute){
+                    if(focusedAttribute && focusedAttribute.saveValue){
                         return focusedAttribute.saveValue();
                     } else {
                         return true;

@@ -6,3 +6,4 @@
 <!ENTITY wizard.try.authent                         "wizard.try.authent">
 <!ENTITY wizard.initialization.selectDomain         "wizard.initialization.selectDomain">
 <!ENTITY wizard.try.synchronize                     "wizard.try.synchronize">
+<!ENTITY wizard.initialization.end                    "wizard.initialization.end">

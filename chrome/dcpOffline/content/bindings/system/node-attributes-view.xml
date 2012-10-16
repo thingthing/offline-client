@@ -10,7 +10,7 @@
     xmlns:xbl="http://www.mozilla.org/xbl"
 >
     <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
-    
+
     <binding id="tab-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
             <xul:tabpanel anonid="tabPanel" flex="1">
@@ -41,7 +41,7 @@
                             .slice(1,-1);
                     this.setAttribute('id', id);
 
-                    if (tabs) {                   
+                    if (tabs) {
                        // be carreful : constructors are called in inverse order of dom order
                         tab = tabs.insertItemAt(0,this.getAttribute('label'),this.getAttribute('label'));
                         tab.setAttribute('linkedpanel', id);
@@ -110,8 +110,9 @@
                         currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
                         columnFlex = childNodes[i].getAttribute('flex');
                         currentColumn.setAttribute('flex', columnFlex ? columnFlex : 1);
+                        currentColumn.setAttribute('attrid', childNodes[i].getAttribute('attrid'));
                         currentVisibility = currentNode.getAttribute('visibility');
-                        if (currentVisibility === 'R' || currentVisibility === 'H') {
+                        if (currentVisibility === 'H') {
                             currentColumn.setAttribute("collapsed", true);
                         }
                         columns .appendChild(currentColumn);
