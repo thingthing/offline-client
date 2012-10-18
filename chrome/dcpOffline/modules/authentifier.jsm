@@ -140,7 +140,11 @@ var authentificator = function() {
                 if (result.result) {
                     this.onSuccess();
                 }else {
-                    this.onError(result.reason);
+                    if (result.reason === "loginUnknown") {
+                        this.onError(this.translate.get("authent.serverUnreachable"));
+                    }else {
+                        this.onError(result.reasonLabel);
+                    }
                 }
             },
 
