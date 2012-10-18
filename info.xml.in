@@ -6,7 +6,7 @@
 
   <requires>
     <module name="dynacase-offline-xulruntimes" />
-    <module name="dynacase-offline-xulruntimes-translations-installers" />
+    <module name="dynacase-offline-xulruntimes-translations-installer" />
   </requires>
 
   <post-install>
