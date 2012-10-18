@@ -16,7 +16,6 @@
 <!ENTITY authent.password                       "password">
 <!ENTITY authent.login.option                   "login.option">
 <!ENTITY authent.applicationURL                 "applicationURL">
-<!ENTITY authent.remember.login.mdp             "login.remember">
 <!ENTITY authent.dialog                         "login">
 <!ENTITY authent.login.progress                 "authent.login.progress">
 <!ENTITY authent.work.offline                   "authent.work.offline">

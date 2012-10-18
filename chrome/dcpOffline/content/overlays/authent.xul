@@ -21,7 +21,7 @@
                 <rows>
                     <row>
                         <label value="&authent.login;" />
-                        <textbox id="authent.login" value="" />
+                        <textbox id="authent.login" value="" disabled="true"/>
                     </row>
                     <row>
                         <label value="&authent.password;" />
@@ -46,11 +46,6 @@
                     <column flex="1"/>
                 </columns>
                 <rows>
-                    <row>
-                        <label value="&authent.remember.login.mdp;" />
-                        <checkbox id="authent.remember"
-                            checked="true" />
-                    </row>
                     <row>
                         <label value="&authent.work.offline;" />
                         <checkbox id="authent.modeOffline"

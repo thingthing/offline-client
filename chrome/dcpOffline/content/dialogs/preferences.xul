@@ -123,10 +123,6 @@
                 name="offline.application.modeOffline"
                 type="bool" />
             <preference
-                id="offline.application.rememberLogin"
-                name="offline.application.rememberLogin"
-                type="bool" />
-            <preference
                 id="offline.application.autoLogin"
                 name="offline.application.autoLogin"
                 type="bool" />
@@ -151,10 +147,6 @@
             id="modeOffline"
             preference="offline.application.modeOffline"
             label="&offline.application.modeOffline;" />
-        <checkbox
-            id="rememberLogin"
-            preference="offline.application.rememberLogin"
-            label="&offline.application.rememberLogin;" />
         <checkbox
             id="autologin"
             preference="offline.application.autoLogin"
