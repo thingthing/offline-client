@@ -29,5 +29,8 @@ function suppressListener() {
 function letSynchronize() {
     document.getElementById("synchronizeButton").disabled = true;
     document.getElementById("cancelButton").disabled = true;
+    window.addEventListener("beforeunload", function() {
+            return "You cannot close during synchronize";
+        }, false);
     tryToSynchronize();
 }

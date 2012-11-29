@@ -69,3 +69,7 @@
 <!ENTITY preference.dialogTitle         "Preferences">
 <!ENTITY preference.applicationPref     "Application">
 <!ENTITY preference.userPref            "User">
+
+<!-- askForStopOrWait -->
+<!ENTITY askForWait.title               "Transaction too long">
+<!ENTITY askForWait.message               "Transaction seems too long. Do you want to kill the application ?">

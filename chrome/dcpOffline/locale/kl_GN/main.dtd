@@ -69,3 +69,7 @@
 <!ENTITY preference.dialogTitle                 "preference.dialogTitle">
 <!ENTITY preference.applicationPref             "preference.applicationPref">
 <!ENTITY preference.userPref                    "preference.userPref">
+
+<!-- askForStopOrWait -->
+<!ENTITY askForWait.title               "askForWait.title">
+<!ENTITY askForWait.message             "askForWait.message">

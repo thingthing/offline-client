@@ -1,5 +1,6 @@
 var EXPORTED_SYMBOLS = [ "Fdl" , "JSON" ];
 Components.utils.import("resource://modules/logger.jsm");
+Components.utils.import("resource://modules/events.jsm");
 
 /**
  * @author Anakeen
@@ -1597,6 +1598,7 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 				}
 			}
 		}
+		applicationEvent.publish("startMonitorXHR", {XHR : xreq});
 		try {
 		    if (bsend.length == 0)
 		        xreq.send('');
@@ -1605,6 +1607,7 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 		} catch (e) {
 		    this.setErrorMessage('HTTP status: unable to send request');
 		}
+		applicationEvent.publish("stopMonitorXHR", {XHR : xreq});
 		if (sync) {
 		    if (xreq.status == 200) {
 		        var r = false;

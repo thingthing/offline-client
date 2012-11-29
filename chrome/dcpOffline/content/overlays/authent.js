@@ -19,23 +19,17 @@ function tryToAuthent() {
         param.currentApplicationURL = document.getElementById('authent.applicationURL').value;
         param.modeOffline = document.getElementById('authent.modeOffline').checked;
 
-        logIHM("bhii");
         Preferences.set("offline.user.login", param.currentLogin);
 
-        logIHM("bhii");
         document.getElementById('authent.password').disabled = true;
         document.getElementById('authent.modeOffline').disabled = true;
         document.getElementById('authent.autoLogin').disabled = true;
-        logIHM("bhii");
         document.getElementById('authent.progressGroup').style.visibility = "visible";
         document.getElementById('authent.progressGroup').hidden = false;
         document.getElementById('authent.errorGroup').style.visibility = "hidden";
 
-        logIHM("bhii");
         authentificator.authent(param, onAuthentSuccess, onAuthentError);
 
-        logIHM("bahh");
-        
         }catch (error){
             onLogError(error);
             logConsole('Authent : doOk '+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);

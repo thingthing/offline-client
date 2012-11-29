@@ -134,6 +134,10 @@
                 id="general.useragent.locale"
                 name="general.useragent.locale"
                 type="string" />
+            <preference
+                id="dcpoffline.XHR.monitoringTime"
+                name="dcpoffline.XHR.monitoringTime"
+                type="int" />
         </preferences>
         <!-- <checkbox
             id="firstRun"
@@ -151,6 +155,14 @@
             id="autologin"
             preference="offline.application.autoLogin"
             label="&offline.application.autoLogin;" />
+        <hbox>
+            <label value="&dcpoffline.XHR.monitoringTime;" />
+            <textbox
+                type="number"
+                increment="500"
+                id="XHR.monitoringTime"
+                preference="dcpoffline.XHR.monitoringTime" />
+        </hbox>
         <!-- <hbox>
             <label value="offline.application.debug.locale" />
             <textbox

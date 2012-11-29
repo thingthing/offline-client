@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="close-dialog" title="&askForWait.title;" buttons="accept,cancel"
+    ondialogaccept="return stop();" ondialogcancel="return wait();">
+
+    <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/askForStopOrWait.js" />
+    <caption>
+        <label value="&askForWait.message;"/>
+    </caption>
+
+</dialog>
