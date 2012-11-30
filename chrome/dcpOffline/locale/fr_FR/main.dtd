@@ -72,4 +72,4 @@
 
 <!-- askForStopOrWait -->
 <!ENTITY askForWait.title               "Transaction trop longue">
-<!ENTITY askForWait.message             "La transaction semble prendre trop de temps. Voulez vous fermer l'application ?">
+<!ENTITY askForWait.message             "L'échange avec le serveur semble être long. Voulez vous fermer l'application ?">
