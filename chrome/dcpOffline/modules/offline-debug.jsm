@@ -1,4 +1,6 @@
-Components.utils.import("resource://modules/fdl-data-debug.jsm");var EXPORTED_SYMBOLS = [ "Fdl", "JSON" ];
+Components.utils.import("resource://modules/fdl-data-debug.jsm");
+Components.utils.import("resource://modules/events.jsm");
+var EXPORTED_SYMBOLS = [ "Fdl", "JSON" ];
 /*!
  * Offline Class
  * @author Anakeen
@@ -659,7 +661,9 @@ Fdl.OfflineSync.prototype = {
                     .createInstance(Components.interfaces.nsIXMLHttpRequest);
             req.open('PUT', url, false); /* synchronous! */
             req.setRequestHeader('Content-Type', mimeType);
+            applicationEvent.publish("startMonitorXHR", {XHR : req});
             req.send(stream);
+            applicationEvent.publish("stopMonitorXHR", {XHR : req});
         }
         return null;
     },

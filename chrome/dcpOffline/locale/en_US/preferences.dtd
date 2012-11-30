@@ -9,3 +9,4 @@
 <!ENTITY offline.application.modeOffline      "Offline ?">
 <!ENTITY offline.application.rememberLogin    "Remember login ?">
 <!ENTITY offline.application.autoLogin        "Auto login ?">
+<!ENTITY dcpoffline.XHR.monitoringTime        "Monitoring time of request">

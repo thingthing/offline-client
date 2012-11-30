@@ -50,7 +50,7 @@ function handleCommandLine(){
 
 /**
  * Check if the profile need upgrade
- * 
+ *
  * @private
  */
 function upgradeProfile(){
@@ -84,7 +84,7 @@ function upgradeProfile(){
                 Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                 .getService(Components.interfaces.mozIJSSubScriptLoader)
                 .loadSubScript(migrationScriptURI, migrationWrapper);
-                
+
                 //check if migration must occur
                 if(migrationWrapper.migrationRequired && migrationWrapper.migrationRequired(profileVersion, appVersion)){
                     // run migrate if function exists
@@ -119,7 +119,7 @@ function upgradeProfile(){
 
 /**
  * Init the network check Private method : you should never use it
- * 
+ *
  * @private
  */
 function initNetworkCheck() {
@@ -133,7 +133,7 @@ function initNetworkCheck() {
 }
 /**
  * Init the application Private method : you should never use it
- * 
+ *
  * @private
  */
 function initApplication() {
@@ -157,7 +157,7 @@ function initApplication() {
  * init all the listener Private method : you should never use it Launch it
  * first : beware this method handle all the behaviour of the application if you
  * break it you break the IHM
- * 
+ *
  * @private
  */
 function initListeners() {
@@ -169,7 +169,7 @@ function initListeners() {
     applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
     applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
     applicationEvent.subscribe("changeSelectedDomain", updateAbstractList);
-    
+
     applicationEvent.subscribe("postChangeSelectedDomain", updateOpenDocumentList);
     applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
     applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateOpenFamily);
@@ -214,9 +214,7 @@ function initListeners() {
 
     applicationEvent.subscribe("askForCloseApplication", tryToClose);
 
-    // applicationEvent.subscribe("preCloseAllDocuments", FIXME);
     applicationEvent.subscribe("closeAllDocuments", closeAllDocuments);
-    // applicationEvent.subscribe("postCloseAllDocuments", FIXME);
 
     applicationEvent.subscribe("preClose", tryToCloseAllDocuments);
     applicationEvent.subscribe("close", close);
@@ -229,10 +227,22 @@ function initListeners() {
     applicationEvent.subscribe("postRemoveDocument", updateAbstractList);
     applicationEvent.subscribe("postSaveDocument", updateAbstractList);
 
+    /*
+    * Long XHR ask to user
+    */
+    applicationEvent.subscribe("startMonitorXHR", startMonitorXHR);
+    applicationEvent.subscribe("stopMonitorXHR", stopMonitorXHR);
+
+    /*
+    * XHR force Close : close if synchro is too long
+    */
+    applicationEvent.subscribe("preXHRForceClose", closeAllDocuments);
+    applicationEvent.subscribe("XHRForceClose", close);
+
 }
 /**
  * Init the values of the IHM Private method : you should never use it
- * 
+ *
  * @private
  */
 function initValues() {
@@ -261,7 +271,7 @@ function initValues() {
 
 /**
  * Open the close dialog Private method : you should never use it
- * 
+ *
  * @private
  */
 function openCloseDialog() {
@@ -274,7 +284,7 @@ function openCloseDialog() {
 
 /**
  * Open the login dialog Private method : you should never use it
- * 
+ *
  * @private
  */
 function openLoginDialog() {
@@ -283,7 +293,7 @@ function openLoginDialog() {
 }
 /**
  * Open the new document dialog Private method : you should never use it
- * 
+ *
  * @private
  */
 function openNewDocumentDialog() {
@@ -292,7 +302,7 @@ function openNewDocumentDialog() {
 }
 /**
  * Open the log dialog Private method : you should never use it
- * 
+ *
  * @private
  */
 function openLog() {
@@ -312,7 +322,7 @@ function openSimpleSynchro(options) {
 // Public Methods
 /**
  * Try to change the current selected domain
- * 
+ *
  * @param value
  */
 function tryToChangeDomain(value) {
@@ -333,7 +343,7 @@ function tryToChangeDomain(value) {
 }
 /**
  * Try to change the current selected family
- * 
+ *
  * @param value
  */
 function tryToChangeFamily(value) {
@@ -352,7 +362,7 @@ function tryToChangeFamily(value) {
 }
 /**
  * Try to create a document
- * 
+ *
  * @param param
  * @returns {Boolean}
  */
@@ -381,7 +391,7 @@ function createDocument(param) {
 /**
  * Try to change to open a document this method should also be used to change
  * the state of a document
- * 
+ *
  * @param param
  */
 function tryToOpenDocument(param) {
@@ -404,7 +414,7 @@ function tryToOpenDocument(param) {
 }
 /**
  * Try to change to close a document
- * 
+ *
  * @param param
  */
 function tryToCloseDocument(param) {
@@ -428,7 +438,7 @@ function tryToCloseDocument(param) {
 }
 /**
  * Try to change to close a document
- * 
+ *
  * @param param
  */
 function tryToCloseAllDocuments(param) {
@@ -488,7 +498,7 @@ function refreshDocumentDate(param){
 
 /**
  * Close the application Private method : you should never use it
- * 
+ *
  * @private
  */
 function close() {
@@ -514,9 +524,9 @@ function updateConnectStatus(aSubject, aTopic, status) {
 }
 /**
  * openDocument in main IHM Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function openDocument(config) {
@@ -574,9 +584,9 @@ function openDocument(config) {
 }
 /**
  * Close a document Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function closeDocument(config) {
@@ -602,7 +612,7 @@ function closeDocument(config) {
 }
 /**
  * Close all documents (Private method : you should never use it)
- * 
+ *
  * @private
  * @param config
  */
@@ -623,7 +633,7 @@ function closeAllDocuments(config) {
 
 /**
  * update interface family list Private method : you should never use it
- * 
+ *
  * @private
  */
 function updateFamilyList(config) {
@@ -636,9 +646,9 @@ function updateFamilyList(config) {
 }
 /**
  * update abstract list Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function updateAbstractList(config) {
@@ -659,9 +669,9 @@ function updateAbstractList(config) {
 }
 /**
  * Update documentList IHM Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function updateOpenDocumentList() {
@@ -690,9 +700,9 @@ function updateOpenDocumentList() {
 }
 /**
  * Update documentList pref Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function addDocumentToOpenList(config) {
@@ -716,9 +726,9 @@ function addDocumentToOpenList(config) {
 }
 /**
  * Remove a document from the open list Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function removeDocumentFromOpenList(config) {
@@ -736,9 +746,9 @@ function removeDocumentFromOpenList(config) {
 }
 /**
  * Update the selected domain pref Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function updateDomainPreference(config) {
@@ -749,9 +759,9 @@ function updateDomainPreference(config) {
 }
 /**
  * Update the doc manager Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function updateDocManager(config) {
@@ -764,9 +774,9 @@ function updateDocManager(config) {
 }
 /**
  * Update the selected family pref Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function updateCurrentFamilyPreference(config) {
@@ -778,9 +788,9 @@ function updateCurrentFamilyPreference(config) {
 }
 /**
  * Update the current open doc pref Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param config
  */
 function updateCurrentOpenDocumentPreference(config) {
@@ -792,9 +802,9 @@ function updateCurrentOpenDocumentPreference(config) {
 }
 /**
  * Clean the current abstract filter Private method : you should never use it
- * 
+ *
  * @private
- * 
+ *
  */
 function cleanCurrentDocSearch() {
     logIHM("cleanCurrentDocSearch");
@@ -807,9 +817,9 @@ function cleanCurrentDocSearch() {
 /**
  * Update the IHM with the current selected domain Private method : you should
  * never use it
- * 
+ *
  * @private
- * 
+ *
  * @param propagEvent
  *            true if you want to propag the event
  */
@@ -839,9 +849,9 @@ function setPrefCurrentSelectedDomain(propagEvent) {
 /**
  * Update the IHM with the current selected family of the domain Private method :
  * you should never use it
- * 
+ *
  * @private
- * 
+ *
  * @param propagEvent
  */
 function setPrefCurrentSelectedFamily(propagEvent) {
@@ -872,9 +882,9 @@ function setPrefCurrentSelectedFamily(propagEvent) {
 /**
  * Update the IHM with the current open document Private method : you should
  * never use it
- * 
+ *
  * @private
- * 
+ *
  * @param propagEvent
  */
 function setPrefCurrentOpenDocument(propagEvent) {
@@ -943,9 +953,9 @@ function prepareCloseDocument(param) {
  * Try to prepare the doc to be displayed Private method : you should never use
  * it Can cancel the display if the document is not ready to be display (in
  * edition...)
- * 
+ *
  * @private
- * 
+ *
  * @param param
  * @returns {Boolean}
  */
@@ -974,9 +984,9 @@ function prepareDoc(param) {
 }
 /**
  * Get the current open document
- * 
+ *
  * Private method : you should never use it
- * 
+ *
  * @private
  */
 function getCurrentDocument() {
@@ -997,9 +1007,9 @@ function getCurrentDocument() {
 }
 /**
  * Get the current list of open documents
- * 
+ *
  * Private method : you should never use it
- * 
+ *
  * @private
  */
 function getListOfOpenDocuments() {
@@ -1014,13 +1024,30 @@ function getListOfOpenDocuments() {
     }
     return openList;
 }
-
+/**
+* Reload the list of creatable family
+*
+**/
 function reloadCreatableFamilies() {
     document.getElementById('creation-menu').menupopup.builder.rebuild();
 }
+
+function startMonitorXHR(param) {
+    if (param.XHR) {
+        param.XHR.timeoutMonitoring = window.setTimeout(function() {
+                openDialog("chrome://dcpoffline/content/dialogs/askForStopOrWait.xul", "", "chrome,alwaysRaised", {xhr :param.XHR});
+            }, Preferences.get('dcpoffline.XHR.monitoringTime', 300000));
+    }
+}
+
+function stopMonitorXHR(param) {
+    if (param.XHR.timeoutMonitoring) {
+        window.clearTimeout(param.XHR.timeoutMonitoring);
+    }
+}
 /**
  * Shortcut to the logConsole
- * 
+ *
  */
 function logIHM(message, object) {
     logConsole(message, object);

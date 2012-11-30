@@ -794,7 +794,7 @@
                         querytype="storage">
                         <xul:menuitem
                             value=""
-                            label="&attribute.enum.empty;" />
+                            label="" />
                         <xul:template>
                             <xul:query><![CDATA[
                                 SELECT key, label 
@@ -907,7 +907,7 @@
                                 querytype="storage">
                                 <xul:menuitem
                                     value=""
-                                    label="&attribute.enum.empty;" />
+                                    label="" />
                                 <xul:template>
                                     <xul:query><![CDATA[
                                         SELECT key, label 

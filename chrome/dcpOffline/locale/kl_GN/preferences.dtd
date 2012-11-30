@@ -9,3 +9,4 @@
 <!ENTITY offline.application.modeOffline      "offline.application.modeOffline">
 <!ENTITY offline.application.rememberLogin    "offline.application.rememberLogin">
 <!ENTITY offline.application.autoLogin        "offline.application.autoLogin">
+<!ENTITY dcpoffline.XHR.monitoringTime        "dcpoffline.XHR.monitoringTime">

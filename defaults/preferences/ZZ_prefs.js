@@ -30,6 +30,12 @@ pref("dcpoffline.url.browser", "");
 
 pref("offline.application.modeOffline", false);
 
+
+/* XHR monitoring time : when an XHR is launched and take more time
+than this parameter, the user will be asked if he want to close the application or wait
+ */
+pref("dcpoffline.XHR.monitoringTime", 300000);
+
 /* let the OS handle http links */
 pref("network.protocol-handler.expose.http", false);
 pref("network.protocol-handler.warn-external.http", false);

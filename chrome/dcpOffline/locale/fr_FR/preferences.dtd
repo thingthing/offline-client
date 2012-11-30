@@ -9,3 +9,4 @@
 <!ENTITY offline.application.modeOffline      "Déconnectée ?">
 <!ENTITY offline.application.rememberLogin    "Se souvenir du login ?">
 <!ENTITY offline.application.autoLogin        "Se connecter automatiquement ?">
+<!ENTITY dcpoffline.XHR.monitoringTime        "Temps de monitoring des requêtes">

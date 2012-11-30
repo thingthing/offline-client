@@ -8,7 +8,7 @@ Components.utils.import("resource://modules/preferences.jsm");
  */
 function openSynchro() {
     window.openDialog("chrome://dcpoffline/content/dialogs/synchro.xul", "",
-            "chrome,modal");
+            "chrome");
 }
 /**
  * Open the preferences dialog Private method : you should never use it
