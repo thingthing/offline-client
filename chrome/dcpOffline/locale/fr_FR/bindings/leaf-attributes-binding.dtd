@@ -3,5 +3,5 @@
 <!ENTITY  attribute.image.button.modify                     "Modifier">
 <!ENTITY  attribute.image.button.delete                     "Supprimer">
 <!ENTITY  attribute.enum.multiple.button.clear.selection    "Effacer la sélection">
-<!ENTITY  attribute.docid.noDocumentSet                     "Valeur non saisie">
+<!ENTITY  attribute.docid.noDocumentSet                     "">
 
