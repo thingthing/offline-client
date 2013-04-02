@@ -57,7 +57,7 @@ dcpDocHeader {
 }
 
 .document-state {
-    font-size: 1.5em
+    font-size: 1.5em;
     font-weight: normal;
 }
 
@@ -111,7 +111,7 @@ dcpAttribute[type=longtext] textarea{
 }
 
 dcpRow{
-    display: -moz-grid-line
+    display: -moz-grid-line;
 }
 
 dcpArrayRowTools,
@@ -159,16 +159,16 @@ dcpAttribute[type=htmltext] a{
 
 .dcpImage {
     max-width:100px;
-   
+
 }
 
-.dcpValue { 
+.dcpValue {
     -moz-box-flex: 1;
 }
 
 .dcpIcon {
     width:16px;
-    height:16px;    
+    height:16px;
 }
 dcpAttribute[type=docid] image {
     width:20px;
@@ -179,13 +179,13 @@ dcpAttribute[type=array] grid {
     border-bottom-width: 2px;
     border-bottom-style: solid;
     border-bottom-color: -moz-use-text-color;
-    
+
     -moz-border-image: none;
     -moz-border-top-colors: threedshadow threeddarkshadow;
     -moz-border-right-colors: threedhighlight threedlightshadow;
     -moz-border-bottom-colors: threedhighlight threedlightshadow;
     -moz-border-left-colors: threedshadow threeddarkshadow;
-    
+
     background-color: -moz-field;
     color: -moz-fieldtext;
 }
@@ -194,13 +194,13 @@ dcpRow{
     border-bottom-width: 2px;
     border-bottom-style: solid;
     border-bottom-color: -moz-use-text-color;
-    
+
     -moz-border-image: none;
     -moz-border-top-colors: threedshadow threeddarkshadow;
     -moz-border-right-colors: threedhighlight threedlightshadow;
     -moz-border-bottom-colors: threedhighlight threedlightshadow;
     -moz-border-left-colors: threedshadow threeddarkshadow;
-    
+
     background-color: -moz-field;
     color: -moz-fieldtext;
 }
