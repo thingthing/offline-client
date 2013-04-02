@@ -133,14 +133,15 @@ localDocument.prototype = {
             }
         },
         getTitle : function() {
-            return this.properties.title;
+            return this.properties.title || '';
         },
         getProperty : function(id) {
             if (id) {
-                if (this.properties) return this.properties[id];
+                if (this.properties && this.properties[id]) {
+                    return this.properties[id];
+                }
                 return null;
             } else {
-                // FIXME
                 throw new ArgException("getValue :: missing arguments");
             }
         },

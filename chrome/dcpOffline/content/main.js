@@ -547,6 +547,11 @@ function openDocument(config) {
             doc = docManager.getLocalDocument({
                 initid : config.documentId
             });
+            if (!doc) {
+                // This is not a real document
+                logIHM("Try to open a non known document "+config.documentId);
+                return;
+            }
             template = doc.getBinding(mode);
             if (template) {
                 template = 'url("' + template + '")';
@@ -707,18 +712,20 @@ function updateOpenDocumentList() {
  */
 function addDocumentToOpenList(config) {
     logIHM("addDocumentToOpenList");
-    var currentDocs = {};
+    var currentDocument, currentDocs = {};
     if (config && config.documentId) {
         if (getListOfOpenDocuments()) {
             currentDocs = getListOfOpenDocuments();
         }
-        var title = docManager.getLocalDocument({
+        currentDocument = docManager.getLocalDocument({
             initid : config.documentId
-        }).getTitle();
-        currentDocs[config.documentId] = {
-                title : title,
-                mode : config.mode
-        };
+        });
+        if (currentDocument) {
+            currentDocs[config.documentId] = {
+                    title : currentDocument.getTitle(),
+                    mode : config.mode
+            };
+        }
         Preferences.set("offline.user." + getCurrentDomain()
                 + ".currentListOfOpenDocuments", JSON.stringify(currentDocs));
         applicationEvent.publish("postUpdateListOfOpenDocumentsPreference");
