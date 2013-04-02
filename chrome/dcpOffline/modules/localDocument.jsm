@@ -85,14 +85,14 @@ localDocument.prototype = {
                     this.setValue(aid, config.values[aid]);
                 }
             }
-            
+
             var r = storageManager.execQuery({
                 query : 'select name from families where famid=:famId',
                 params : {
                     famId : config.fromid
                 }
             });
-            
+
             if (r.length == 1) {
                 this.properties.fromname = r[0].name;
             } else {
@@ -105,9 +105,10 @@ localDocument.prototype = {
         },
 
         getValue : function(id, index) {
+            var value;
             if (id) {
                 if( (index === undefined) || (index === -1) ){
-                    var value = this.values[id];
+                    value = this.values[id];
                     if(value === undefined){
                         value = '';
                     }
@@ -118,7 +119,7 @@ localDocument.prototype = {
                     }
                     var arrayValue = this.getValue(id);
                     if( Array.isArray(arrayValue) ){
-                        var value = arrayValue[index];
+                        value = arrayValue[index];
                         if(value === undefined){
                             value = '';
                         }
@@ -167,7 +168,7 @@ localDocument.prototype = {
             }
             return _propertyNames;
         },
-        
+
         getPullExtraData : function () {
             return this.getProperty('pullextradata');
         },
@@ -181,7 +182,9 @@ localDocument.prototype = {
          * @returns {localDocument}
          */
         setPushExtraData : function (key,value) {
-            if (this.properties.pushextradata == null) this.properties.pushextradata={};
+            if (this.properties.pushextradata === null)  {
+                this.properties.pushextradata={};
+            }
             this.properties.pushextradata[key]=value;
             return this;
         },
@@ -228,15 +231,15 @@ localDocument.prototype = {
             this._dirty = true;
             return this;
         },
-        
+
         save : function(config) {
             if (this.inMemoryDoc){
                 throw "This is an inMemoryDoc. You must store it before saving";
-            };
+            }
             if (this.canEdit() || (config && config.force)) {
                 var now = new Date();
                 if ((!config) || (! config.noModificationDate)) {
-                  this.properties.revdate = parseInt(now.getTime() / 1000);
+                  this.properties.revdate = parseInt(now.getTime() / 1000, 10);
                   this.properties.mdate = utils.toIso8601(now, true);
                 }
                 var saveConfig = {
@@ -273,7 +276,7 @@ localDocument.prototype = {
             }
             return this;
         },
-        
+
         store: function(config){
             try{
                 if (config && config.recomputeTitle) {
@@ -312,7 +315,7 @@ localDocument.prototype = {
                         lastsavelocal:new Date().toISOString()
                     }
                 });
-    
+
                 //says the doc has been saved in DB
                 this.inMemoryDoc = false;
                 this.save(config);
@@ -322,7 +325,7 @@ localDocument.prototype = {
                 throw(e);
             }
         },
-        
+
         /*
          * Check if the document has been modified and not saved
          */
@@ -374,7 +377,7 @@ localDocument.prototype = {
             }
             return this._modified;
         },
-        
+
         /**
          * @return boolean true if can
          */
@@ -390,7 +393,7 @@ localDocument.prototype = {
             if (!this.domainId) {
                 throw new ArgException("canEdit :: missing arguments");
             }
-            
+
             var r = storageManager
             .execQuery({
                 query : 'select docsbydomain.editable from documents, docsbydomain where docsbydomain.initid = documents.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',
@@ -399,11 +402,11 @@ localDocument.prototype = {
                     initid : this._initid
                 }
             });
-           
+
             if (r.length == 1) {
                 return (r[0].editable == 1);
             }
-           
+
             return false;
         },
         /**
@@ -411,7 +414,7 @@ localDocument.prototype = {
          * @returns {Boolean}
          */
         isLocked: function() {
-            
+
             if(this.isOnlyLocal()){
                 //non syncronized documents are editable
                 return false;
@@ -419,7 +422,7 @@ localDocument.prototype = {
             if (!this.domainId) {
                 throw new ArgException("isLocked :: missing arguments");
             }
-            
+
             var r = storageManager
             .execQuery({
                 query : 'select docsbydomain.editable from documents, docsbydomain where docsbydomain.initid = documents.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',
@@ -428,14 +431,14 @@ localDocument.prototype = {
                     initid : this._initid
                 }
             });
-           
+
             if (r.length == 1) {
                 return (r[0].editable == 1);
             }
-           
+
             return false;
         },
-        
+
         /**
          * @deprecated
          * @param id
@@ -450,7 +453,7 @@ localDocument.prototype = {
                 throw new ArgException("getDisplayValue :: missing arguments");
             }
         },
-        
+
         /**
          * @param string
          *            mode view|edit
@@ -461,10 +464,10 @@ localDocument.prototype = {
             var file= Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
             file.append('Bindings');
             file.append(famName+'.xml');
-            
+
             Components.utils.import("resource://modules/formater.jsm");
             var fileURI = formater.getURI({file: file});
-            
+
             if(file.exists()){
                 return fileURI.spec+'#document-'+famName+'-'+mode;
             } else {
@@ -488,7 +491,7 @@ localDocument.prototype = {
                     famname : famName
                 }
             });
-            
+
             if (r.length > 0) {
                 return r[0].icon;
             }
@@ -516,7 +519,7 @@ localDocument.prototype = {
          * @param string attrid
          */
         getRowNumber: function (attrid) {
-            
+
         },
         /**
          * test if document has been localy created and never synchronized
@@ -626,7 +629,7 @@ localDocument.prototype = {
                     oldDate = new Date(Date.parse(oldDate));
                     if (newDate > oldDate) {
                         that.properties.mdate = utils.toIso8601(newDate, true);
-                        that.properties.revdate = parseInt(newDate.getTime() / 1000);
+                        that.properties.revdate = parseInt(newDate.getTime() / 1000, 10);
                         storageManager.execQuery({
                             query : 'UPDATE synchrotimes'
                                     + ' SET lastsavelocal=:lastsavelocal'
@@ -642,7 +645,7 @@ localDocument.prototype = {
                                     + ' WHERE initid=:initid',
                             params : {
                                 mdate : utils.toIso8601(newDate, true),
-                                revdate : parseInt(newDate.getTime() / 1000),
+                                revdate : parseInt(newDate.getTime() / 1000, 10),
                                 initid : that._initid
                             }
                         });
