@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE bindings [
-      <!ENTITY % node-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/node-attributes-binding.dtd" >
-      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
-      <!ENTITY separator "&#160;:&#160;" >
-      %node-attributes-bindingDTD;
-]>
+        <!ENTITY % node-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/node-attributes-binding.dtd" >
+        <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+        <!ENTITY separator "&#160;:&#160;" >
+        %node-attributes-bindingDTD;
+        ]>
 <bindings id="node-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl"
 >
@@ -20,7 +20,8 @@
             </xul:tabpanel>
         </content>
         <implementation>
-            <field name="tabbox" readonly="true"><![CDATA[
+            <field name="tabbox" readonly="true">
+                <![CDATA[
                 var parent = this.parentNode;
                 while (parent) {
                     if (parent.localName == "tabbox")
@@ -28,8 +29,9 @@
                     parent = parent.parentNode;
                 }
                 parent;
-            ]]></field>
-            <constructor><![CDATA[
+            ]]> </field>
+            <constructor>
+                <![CDATA[
                 var tabs, tab, id;
                 if (this.tabbox) {
                     tabs = this.tabbox.tabs;
@@ -53,7 +55,7 @@
                         logError(new BindError("there is no 'tabs' tag associated with this tab: " + this.getAttribute("attrid")));
                     }
                 }
-            ]]></constructor>
+            ]]> </constructor>
         </implementation>
     </binding>
     <binding id="frame-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
@@ -81,21 +83,30 @@
             </xul:box>
         </content>
         <implementation>
-            <constructor><![CDATA[
+
+            <field name="childAttributes"
+                readonly="true">
+                this.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpAttribute');
+            </field>
+            <field name="lineTemplate"
+                readonly="true">
+                this.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpAttribute');
+            </field>
+
+            <constructor>
+                <![CDATA[
                     Components.utils.import("resource://modules/logger.jsm");
 
-                    var i, r, length, tbody, childNodes, arrayRowLength, headerRow, rows, columns,
-                            currentColumn, columnFlex, currentLabel, currentNode, currentVisibility, currentRow, currentAttribute;
+                    var i, j, r, length, tbody, arrayRowLength, headerRow, rows, columns, elements, currentColumn, columnFlex, currentLabel, currentNode, currentVisibility, currentRow, currentAttribute;
 
                     tbody = this.getChild('tableBody');
-                    childNodes = this.childNodes;
                     arrayRowLength = 0;
                     headerRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
                     rows = this.getChild('rows');
                     columns = this.getChild('columns');
 
-                    for (i = 0, length = childNodes.length; i < length; i++) {
-                        currentNode = childNodes[i];
+                    for (i = 0, length = this.lineTemplate.length; i < length; i++) {
+                        currentNode = this.lineTemplate[i];
 
                         /* Generate label line */
                         currentLabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
@@ -108,9 +119,9 @@
 
                         /*Generate column content */
                         currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
-                        columnFlex = childNodes[i].getAttribute('flex');
+                        columnFlex = this.lineTemplate[i].getAttribute('flex');
                         currentColumn.setAttribute('flex', columnFlex ? columnFlex : 1);
-                        currentColumn.setAttribute('attrid', childNodes[i].getAttribute('attrid'));
+                        currentColumn.setAttribute('attrid', this.lineTemplate[i].getAttribute('attrid'));
                         currentVisibility = currentNode.getAttribute('visibility');
                         if (currentVisibility === 'H') {
                             currentColumn.setAttribute("collapsed", true);
@@ -125,11 +136,16 @@
                     for (i = 0; i < arrayRowLength; i++) {
                         currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
 
-                        for ( r = 0; r < childNodes.length; r++) {
-                            currentAttribute = childNodes[r].cloneNode(true);
+                        for ( r = 0; r < this.lineTemplate.length; r++) {
+                            currentAttribute = this.lineTemplate[r].cloneNode(true);
                             currentAttribute.setAttribute('index', i);
 
                             currentRow.appendChild(currentAttribute);
+                            elements = currentAttribute.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpAttribute');
+
+                            for (j = 0; j < elements.length; j++) {
+                                elements[j].setAttribute('index', i);
+                            }
                         }
                         rows.appendChild(currentRow);
                     }
