@@ -3,7 +3,7 @@ Components.utils.import("resource://modules/logger.jsm");
 
 function initDialog() {
 
-    var result = window.arguments[0];
+    var result = window.arguments[0], reportPath;
 
     logConsole('endSync', result);
 
@@ -43,6 +43,10 @@ function initDialog() {
         document.getElementById("resultStatus").collapsed = true;
         document.getElementById("resultLabel").collapsed = true;
     }
+    reportPath = computeReportPath();
+    if (reportPath) {
+        document.getElementById("reportFrame").setAttribute("src", "file://"+reportPath+'/#synchro-result');
+    }
 }
 
 function openServerStatusPage() {
@@ -60,5 +64,35 @@ function openServerStatusPage() {
 
         // now, open it!
         extps.loadURI(uriToOpen);
+    }
+}
+
+function computeReportPath(domainName){
+    var domainId, manager, reportFile;
+    if(!domainName){
+        domainId = getCurrentDomain();
+        manager=storageManager
+                .execQuery({
+                    query : "select * from domains where id=:domainid",
+                        params:{
+                            domainid:domainId
+                        }
+                });
+        if (manager.length == 1) {
+            domainName = manager[0].name;
+        } else {
+            logIHM("openSynchroReport : could not get domain name (domain id is "+domainId+')');
+        }
+    }
+    reportFile = Components.classes["@mozilla.org/file/directory_service;1"]
+            .getService(Components.interfaces.nsIProperties)
+            .get("ProfD", Components.interfaces.nsILocalFile);
+    reportFile.append('Logs');
+    reportFile.append('report-' + domainName + '.html');
+    if(reportFile.exists()){
+        logConsole("I exist !");
+        return reportFile.path;
+    } else {
+        return false;
     }
 }
