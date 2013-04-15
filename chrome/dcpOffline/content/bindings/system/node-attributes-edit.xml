@@ -11,59 +11,64 @@
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
-    
+
     <binding id="node-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
-    
+
     <binding id="tab-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
         <!-- use tab-attr-view instead -->
     </binding>
-    
+
     <binding id="frame-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
         <!-- use frame-attr-view instead -->
     </binding>
-    
+
     <binding id="array-attr-edit" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
-    
+
         <content>
-            
+
             <xul:groupbox class="dcpAttribute array" flex="1">
                 <xul:caption anonid="caption" xbl:inherits="label"/>
-                
+
                 <xul:grid flex="1" inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
                 </xul:grid>
-                
+
             </xul:groupbox>
-            
+
             <xul:box anonid="childAttributes" style="display: none;">
                 <children />
             </xul:box>
-            
+
         </content>
-        
+
         <implementation>
-            
+
             <field name="rows"
                 readonly="true">
                 this.getChild('rows');
             </field>
-            
+
             <field name="columns"
                 readonly="true">
                 this.getChild('columns');
             </field>
-            
+
             <field name="childAttributes"
                 readonly="true">
                 this.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpAttribute');
             </field>
-            
+            <field name="lineTemplate"
+                readonly="true">
+                this.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpAttribute');
+            </field>
+
             <method name="insertNewRow">
                 <parameter name="rowIndex" />
                 <parameter name="noReindex" />
                 <body><![CDATA[
                     Components.utils.import("resource://modules/logger.jsm");
+                    var indexInGrid, currentRow, i, attributeNode, elements, currentAttribute, j, attrid, value;
                     try{
                         if(rowIndex === undefined){
                             rowIndex = this.rows.childElementCount-1;
@@ -73,7 +78,7 @@
                             throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is not a number"));
                         } else {
                             rowIndex = rowIndex-0; //remember that all parameters are string...
-                            var indexInGrid = rowIndex+1; //so that we go after head
+                            indexInGrid = rowIndex+1; //so that we go after head
                         }
                         if(indexInGrid > this.rows.childElementCount){
                             alert(indexInGrid + " VS " + this.rows.childElementCount);
@@ -81,117 +86,129 @@
                         } else if(indexInGrid < 1){
                             throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is too low"));
                         }
-                        
-                        var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", 'dcpRow');
+
+                        currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", 'dcpRow');
                         currentRow.setAttribute('index', rowIndex);
-                        
-                        for (var i = 0; i < this.childAttributes.length; ++i) {
-                            var attributeNode = this.childAttributes[i];
-                            
-                            var currentAttribute = attributeNode.cloneNode(true);
+
+                        for (i = 0; i < this.lineTemplate.length; ++i) {
+                            attributeNode = this.lineTemplate[i];
+
+                            currentAttribute = attributeNode.cloneNode(true);
                             currentAttribute.setAttribute('flex',1);
                             currentAttribute.setAttribute('index', rowIndex);
-                            
+
+                            elements = currentAttribute.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpAttribute');
+
+                            for (j = 0; j < elements.length; j++) {
+                                elements[j].setAttribute('index', rowIndex);
+                            }
+
                             currentRow.appendChild(currentAttribute);
-                            
-                            if(this.constructed){
-                                //insert empty value at rowIndex position, only if insertion occurs after construction
-                                var attrid = currentAttribute.getAttribute('attrid');
-                                
-                                var value = this.doc.getValue(attrid);
+
+                        }
+
+                        if(this.constructed){
+                            //insert empty value at rowIndex position, only if insertion occurs after construction
+                            for (i = 0; i < this.childAttributes.length; i++) {
+                                attrid = this.childAttributes[i].getAttribute('attrid');
+
+                                value = this.doc.getValue(attrid);
                                 if( (!Array.isArray(value)) && (!value) ){
                                     value = [];
                                 }
                                 value.splice(rowIndex, 0, '');
-                            
                                 this.doc.setValue(attrid, value);
                             }
                         }
-                        
+
                         this.rows.insertBefore(currentRow, this.rows.childNodes[indexInGrid-1].nextSibling); // ==insertAfter or append
-                        
-                        if(! noReindex){
+
+                        if(!noReindex){
                             this.reindexRows(rowIndex);
                         }
                     } catch(e) {
-                        logError(e, "insert New Row in doc "+this.doc.getInitid());
+                        logError(e, "Unable to insert New Row in doc "+this.doc.getInitid());
                     }
                 ]]></body>
             </method>
-            
+
             <method name="deleteRow">
                 <parameter name="rowIndex" />
                 <parameter name="noReindex" />
                 <body><![CDATA[
+                    var attrid, value, i, row, indexInGrid;
                     Components.utils.import("resource://modules/logger.jsm");
                     Components.utils.import("resource://modules/exceptions.jsm");
-                    
+
                     logConsole("remove row "+rowIndex);
-                    
+
                     if(isNaN(rowIndex)){
                         throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + "is not a number"));
                     } else {
                         rowIndex = rowIndex-0; //remember that all parameters are string...
-                        var indexInGrid = rowIndex+1; //so that we go after head
+                        indexInGrid = rowIndex+1; //so that we go after head
                     }
                     if(indexInGrid > this.rows.childElementCount-1){
                         throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
                     } else if(indexInGrid < 1){
                         throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + "is too low"));
                     }
-                    
-                    var row = this.rows.childNodes[indexInGrid];
-                    
+
+                    row = this.rows.childNodes[indexInGrid];
+
                     if(row.index != rowIndex){
                         throw("(FIXME) trying to remove row at index ["+rowIndex+"] but this rows says having index ["+row.index+"]");
                     }
-                    
-                    for (var i = 0; i < this.childAttributes.length; ++i) {
-                        var attrid = this.childAttributes[i].getAttribute('attrid');
-                        
-                        var value = this.doc.getValue(attrid);
-                        value.splice(rowIndex,1)
-                        
+
+                    for (i = 0; i < this.childAttributes.length; ++i) {
+                        attrid = this.childAttributes[i].getAttribute('attrid');
+                        value = this.doc.getValue(attrid);
+                        value.splice(rowIndex,1);
                         this.doc.setValue(attrid, value);
                     }
-                    
+
                     this.rows.removeChild(row);
-                    
+
                     if(! noReindex){
                         this.reindexRows(rowIndex);
                     }
-                    
+
                 ]]></body>
             </method>
-            
+
             <method name="reindexRows">
                 <parameter name="fromRow" />
                 <body><![CDATA[
+                    var rowChildren, i, row, j, elements, rowIndex;
                     if(isNaN(fromRow)){
                         fromRow = 0;
                     } else {
                         fromRow = fromRow-0;
                     }
-                    
+
                     Components.utils.import("resource://modules/logger.jsm");
                     logConsole("reindex rows from " + fromRow + " to " + this.rows.childNodes.length);
-                    
-                    var rowChildren = this.rows.childNodes;
-                    
-                    for (var i = fromRow+1; i < this.rows.childNodes.length; i++){
-                        var row = rowChildren[i];
-                        logConsole("reindexing row at position "+i);
-                        logConsole("row index was "+row.index);
-                        logConsole("row index will be "+(i-1));
-                        row.index = i-1;
+
+                    rowChildren = this.rows.childNodes;
+
+                    for (i = fromRow+1; i < this.rows.childNodes.length; i++){
+                        row = rowChildren[i], rowIndex = i - 1;
+
+                        row.setAttribute('index', rowIndex);
+
+                        elements = row.querySelectorAll("[index]");
+
+                        for (j = 0; j < elements.length; j++) {
+                            elements[j].setAttribute('index', rowIndex);
+                        }
                     }
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                 Components.utils.import("resource://modules/logger.jsm");
 
-                var currentRow, toolsColumn, i, toolsCell, nbRows = 0, currentColumn, columnFlex, visibility;
+                var currentRow, toolsColumn, i, toolsCell, nbRows = 0, currentColumn, columnFlex, visibility, clabel;
                 currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
 
                 toolsColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
@@ -202,52 +219,50 @@
                 toolsCell.classList.add('plain');
                 currentRow.appendChild(toolsCell);
 
-                for (i = 0; i < this.childAttributes.length; ++i) {
-                    var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
-                    clabel.setAttribute("value", this.childAttributes[i].getAttribute('label'));
-                    clabel.setAttribute("tooltiptext", this.childAttributes[i].getAttribute('label'));
+                for (i = 0; i < this.lineTemplate.length; ++i) {
+                    clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
+                    clabel.setAttribute("value", this.lineTemplate[i].getAttribute('label'));
+                    clabel.setAttribute("tooltiptext", this.lineTemplate[i].getAttribute('label'));
                     clabel.classList.add('header');
                     clabel.classList.add('plain');
-                    
+
                     currentRow.appendChild(clabel);
-                    
+
                     currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
-                    columnFlex = this.childAttributes[i].getAttribute('flex');
+                    columnFlex = this.lineTemplate[i].getAttribute('flex');
                     currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
-                    currentColumn.setAttribute('attrid', this.childAttributes[i].getAttribute('attrid'));
-                    
-                    visibility = this.childAttributes[i].getAttribute('visibility');
+                    currentColumn.setAttribute('attrid', this.lineTemplate[i].getAttribute('attrid'));
+
+                    visibility = this.lineTemplate[i].getAttribute('visibility');
                     if(visibility == 'R' || visibility == 'H'){
                         currentColumn.collapsed = true;
                     }
-                    
+
                     this.columns.appendChild(currentColumn);
-                    
-                    nbRows = Math.max(nbRows, this.doc.getValue(this.childAttributes[i].getAttribute('attrid')).length);
+
+                    nbRows = Math.max(nbRows, this.doc.getValue(this.lineTemplate[i].getAttribute('attrid')).length);
                 }
-                
+
                 this.rows.appendChild(currentRow);
-                
+
                 for (i = 0; i < nbRows; i++){
                     this.insertNewRow(i, true);
                 }
-                
-                //this.reindexRows();
-                
+
                 this.constructed = true;
-                
+
             ]]></constructor>
         </implementation>
     </binding>
-    
+
     <binding id="row-attr-edit">
         <content>
             <xul:dcpArrayRowTools anonid="row-tools" xbl:inherits="index" />
             <children />
         </content>
-        
+
         <implementation>
-            
+
             <field name="array">
                 var parent = this.parentNode;
                 while (parent) {
@@ -258,19 +273,19 @@
                 }
                 parent;
             </field>
-            
+
             <property name="index"
                 onget="return this.getAttribute('index');"
                 onset="this.updateIndex(val);">
             </property>
-            
+
             <method name="getChild">
                 <parameter name="aChildName" />
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
-            
+
             <method name="updateIndex">
                 <parameter name="newIndex" />
                 <body><![CDATA[
@@ -285,20 +300,20 @@
                     }
                 ]]></body>
             </method>
-            
+
         </implementation>
-        
+
     </binding>
-    
+
     <binding id="array-table-tools">
         <content>
             <xul:hbox class="array-table-tools">
                 <xul:button anonid="button-add" class="add add-row simple-button" tooltiptext="&array.table.tools.add;" />
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            
+
             <field name="array">
                 var parent = this.parentNode;
                 while (parent) {
@@ -309,16 +324,16 @@
                 }
                 parent;
             </field>
-            
+
             <method name="getChild">
                 <parameter name="aChildName" />
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
-            
+
         </implementation>
-        
+
         <handlers>
             <handler event="click" button="0"><![CDATA[
                 switch(event.originalTarget){
@@ -329,20 +344,20 @@
             ]]></handler>
         </handlers>
     </binding>
-    
+
     <binding id="array-row-tools">
-        
+
         <content>
-            
+
             <xul:hbox class="array-row-tools">
                 <xul:button anonid="button-delete" class="delete delete-row simple-button" tooltiptext="&array.row.tools.delete;" />
                 <xul:button anonid="button-add" class="add add-row simple-button" tooltiptext="&array.row.tools.add;" />
             </xul:hbox>
-            
+
         </content>
-        
+
         <implementation>
-            
+
             <field name="array">
                 var parent = this.parentNode;
                 while (parent) {
@@ -353,21 +368,21 @@
                 }
                 parent;
             </field>
-            
+
             <property name="index"
                 onget="return this.getAttribute('index');"
                 onset="this.setAttribute('index', val);">
             </property>
-            
+
             <method name="getChild">
                 <parameter name="aChildName" />
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
-            
+
         </implementation>
-        
+
         <handlers>
             <handler event="click" button="0"><![CDATA[
                 switch(event.originalTarget){
@@ -381,5 +396,5 @@
             ]]></handler>
         </handlers>
     </binding>
-    
+
 </bindings>
